@@ -24,6 +24,7 @@ class network_player:
         self.x = x
         self.y = y
         self.angle = angle #PLAYER_ANGLE
+        self.angle_range = []
         self.shot = shot
         self.health = health
         self.rel = rel
@@ -84,6 +85,13 @@ class network_player:
     def update(self):
         self.get_sprite()
     
+    def get_angle_range(self):
+        sprite_angle_ranges = {
+        self.idle_images[0]: (0, math.pi/4),     # Angle range for sprite1
+        self.idle_images[1]: (math.pi/4, math.pi/2)    # Angle range for sprite2
+        # Add more sprite angle ranges as needed
+        }
+        self.angle_range = sprite_angle_ranges
     
     @property
     def map_pos(self):
