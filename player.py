@@ -5,6 +5,8 @@ import math
 
 class Player:
     def __init__(self, game):
+        self.playerID = 0
+        self.name = "Noname"
         self.game = game
         self.x, self.y = PLAYER_POS
         self.angle = PLAYER_ANGLE
@@ -13,8 +15,12 @@ class Player:
         self.rel = 0
         self.health_recovery_delay = 700
         self.time_prev = pg.time.get_ticks()
+        self.class_id = 0
         # diagonal movement correction
         self.diag_move_corr = 1 / math.sqrt(2)
+        self.prevx = 0
+        self.prevy = 0
+        self.hasMoved = True
 
     def recover_health(self):
         if self.check_health_recovery_delay() and self.health < PLAYER_MAX_HEALTH:
@@ -25,6 +31,16 @@ class Player:
         if time_now - self.time_prev > self.health_recovery_delay:
             self.time_prev = time_now
             return True
+    
+    def set_player_id(self, id):
+        print("Set local player id to ", id)
+        self.playerID = id
+
+    def set_player_class(self,classId):
+        self.class_id = classId
+
+    def set_player_name(self, name):
+        self.name = name
 
     def check_game_over(self):
         if self.health < 1:
@@ -77,6 +93,10 @@ class Player:
         if num_key_pressed:
             dx *= self.diag_move_corr
             dy *= self.diag_move_corr
+
+        if self.x != self.prevx or self.y != self.prevy:
+            self.hasMoved = True
+        #print(f"x {self.x}, y{self.y}")
 
         self.check_wall_collision(dx, dy)
 

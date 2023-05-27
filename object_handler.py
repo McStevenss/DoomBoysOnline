@@ -1,7 +1,7 @@
 from sprite_object import *
 from npc import *
 from random import choices, randrange
-
+#from player_list import *
 
 class ObjectHandler:
     def __init__(self, game):
@@ -9,11 +9,14 @@ class ObjectHandler:
         self.sprite_list = []
         self.npc_list = []
         self.npc_sprite_path = 'resources/sprites/npc/'
+        self.player_sprite_path = 'resources/sprites/npc/soldier'
         self.static_sprite_path = 'resources/sprites/static_sprites/'
         self.anim_sprite_path = 'resources/sprites/animated_sprites/'
         add_sprite = self.add_sprite
         add_npc = self.add_npc
+        #add_player= self.add_players
         self.npc_positions = {}
+        self.network_player_positions = {}
 
         # spawn npc
         self.enemies = 20  # npc count
@@ -21,7 +24,8 @@ class ObjectHandler:
         self.weights = [70, 20, 10]
         self.restricted_area = {(i, j) for i in range(10) for j in range(10)}
         self.spawn_npc()
-
+        #add_player()
+        
         # sprite map
         add_sprite(AnimatedSprite(game))
         add_sprite(AnimatedSprite(game, pos=(1.5, 1.5)))
@@ -71,14 +75,20 @@ class ObjectHandler:
             pg.time.delay(1500)
             self.game.new_game()
 
-    def update(self):
+    def update(self, player_list):
         self.npc_positions = {npc.map_pos for npc in self.npc_list if npc.alive}
         [sprite.update() for sprite in self.sprite_list]
         [npc.update() for npc in self.npc_list]
-        self.check_win()
+        
+        if len(player_list) > 0:
+            [player_list[player].update() for player in player_list]
+        #self.check_win()
 
     def add_npc(self, npc):
         self.npc_list.append(npc)
 
     def add_sprite(self, sprite):
         self.sprite_list.append(sprite)
+
+    # def add_players(self,):
+    #     self.player_List = self.player_List.get_players()
