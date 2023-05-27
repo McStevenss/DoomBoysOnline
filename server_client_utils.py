@@ -30,8 +30,8 @@ def handle_connection(game, player: Player, s, playerList: player_list):
         gameEvent = pickle.loads(inm.recv(BUFFERSIZE))
 
 
-        if gameEvent[0] == 'heartbeat':
-            s.send(pickle.dumps(['heartbeat', player.playerID]))
+        # if gameEvent[0] == 'heartbeat':
+        #    continue
 
         if gameEvent[0] == 'id update':
             playerid = gameEvent[1]

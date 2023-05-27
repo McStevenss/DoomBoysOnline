@@ -46,7 +46,7 @@ def handle_message(message, outgoing, player_list):
         update = message
 
 
-    for i in outgoing:
+    for i,id in outgoing:
 
         if message[0] != 'new_player':
             update = [message[0]]

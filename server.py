@@ -85,6 +85,7 @@ class MainServer(asyncore.dispatcher):
                 print("Cant contact player", playerid, "removing connection...")
                 outgoing.remove((conn,playerid))
                 del player_list[playerid]
+                print(f"players left: {len(player_list)}")
 
     for conn, playerid in outgoing:
       for i in range(len(disconnected_players)):
