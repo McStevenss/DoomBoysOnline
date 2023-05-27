@@ -4,6 +4,8 @@ import random
 import pickle
 import time
 from server_utils import handle_message
+import threading
+
 
 BUFFERSIZE = 512
 HEARTBEAT_INTERVAL = 5
@@ -36,9 +38,6 @@ def updateWorld(message):
 
   player_list = updated_player_list
 
-def send_heatbeat(conn):
-  print("Sending heartbeat")
-
 #Lobby server
 class MainServer(asyncore.dispatcher):
   def __init__(self, port):
@@ -46,15 +45,17 @@ class MainServer(asyncore.dispatcher):
     self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
     self.bind(('', port))
     self.listen(10)
+    self.last_heartbeat_time = time.time()
+    self.heartbeat_interval = 15 # Heartbeat interval in seconds
 
   def handle_accept(self):
     #Whats supposed to happen when a new connection joins
     conn, addr = self.accept()
     print('Connection address:' + addr[0] + " " + str(addr[1]))
-    outgoing.append(conn)
     playerid = random.randint(1000, 1000000)
     player = Player(playerid)
     player_list[playerid] = player
+    outgoing.append((conn,playerid))
     conn.send(pickle.dumps(['id update', playerid]))
     player_object_list = []
     for key in player_list:
@@ -67,8 +68,29 @@ class MainServer(asyncore.dispatcher):
     existing_player_data.append(player_object_list)
     print(player_object_list)
     conn.send(pickle.dumps(existing_player_data))
-
     SecondaryServer(conn)
+
+
+  def send_heartbeat(self):
+    current_time = time.time()
+    disconnected_players= []
+    if current_time - self.last_heartbeat_time >= self.heartbeat_interval:
+
+          for conn, playerid in outgoing:
+              try:
+                conn.send(pickle.dumps(['heartbeat']))
+              except:
+                self.last_heartbeat_time = current_time
+                disconnected_players.append(playerid)
+                print("Cant contact player", playerid, "removing connection...")
+                outgoing.remove((conn,playerid))
+                del player_list[playerid]
+
+    for conn, playerid in outgoing:
+      for i in range(len(disconnected_players)):
+        conn.send(pickle.dumps(['remove_player', playerid]))
+
+    
 
 
 #Game server
@@ -85,15 +107,10 @@ class SecondaryServer(asyncore.dispatcher_with_send):
       else:
           self.close()
 
-  # def handle_write(self):
-  #   current_time = time.time()
-  #   if current_time - self.last_heartbeat_time >= HEARTBEAT_INTERVAL:
-  #       for connection in outgoing:
-  #         connection.send(pickle.dumps(['heartbeat', playerid]))
-  #         self.send(b'heartbeat')
-  #         self.last_heartbeat_time = current_time
 
-
-MainServer(4321)
+server= MainServer(4321)
 print("Server Started...")
-asyncore.loop()
+while True:
+    asyncore.loop(timeout=0.1, count=1)
+    server.send_heartbeat()
+#asyncore.loop()

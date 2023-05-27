@@ -28,6 +28,11 @@ def handle_connection(game, player: Player, s, playerList: player_list):
     ins, outs, ex = select.select([s], [], [], 0)
     for inm in ins: 
         gameEvent = pickle.loads(inm.recv(BUFFERSIZE))
+
+
+        if gameEvent[0] == 'heartbeat':
+            s.send(pickle.dumps(['heartbeat', player.playerID]))
+
         if gameEvent[0] == 'id update':
             playerid = gameEvent[1]
 
@@ -48,6 +53,12 @@ def handle_connection(game, player: Player, s, playerList: player_list):
                angle = player_data[6]
                existing_player = network_player(game,playerId,player_class,playerName, player_x,player_y,angle,health=player_hp)
                playerList.add_player(existing_player, playerId)
+
+        if gameEvent[0] == 'remove_player':
+            #removing unresponsive players
+            new_player_list = playerList.get_players()
+            del new_player_list[gameEvent[1]]
+            playerList.set_playerList(new_player_list)
 
         if gameEvent[0] == 'new_player':
             playerId = gameEvent[1]
