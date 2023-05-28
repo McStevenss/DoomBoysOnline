@@ -131,27 +131,6 @@ class network_player:
     def get_sprite(self):
         player = self.game.player
 
-        relative_angle = math.atan2(self.game.player.angle, self.angle)
-        relative_angle_degrees = math.degrees(relative_angle)
-        relative_angle_degrees = (relative_angle_degrees + 360) % 360  # Ensure angle is within 0-360 range
-        #adjust for negative quadrants
-        if relative_angle_degrees > 180:
-            relative_angle_degrees -= 360
-        # Calculate the absolute viewing angle in degrees
-        viewing_angle_degrees = math.degrees(self.game.player.angle)
-        
-        # Calculate the viewing angle relative to the sprite directions
-        adjusted_angle = relative_angle_degrees - viewing_angle_degrees
-
-        print("local player:",self.game.player.angle ,"network player", self.angle)
-        # print("relative angle:", relative_angle)
-        # print("relative_angle_degrees:", relative_angle_degrees)
-        # print("adjusted_angle:", adjusted_angle)
-        
-        adjusted_angle = (adjusted_angle + 360) % 360  # Ensure angle is within 0-360 range
-        print("adjusted_angle 360 range:", adjusted_angle)
-
-
         dx = self.x - player.x
         dy = self.y - player.y
         self.dx, self.dy = dx, dy
@@ -164,16 +143,18 @@ class network_player:
         delta_rays = delta / DELTA_ANGLE
         self.screen_x = (HALF_NUM_RAYS + delta_rays) * SCALE
 
+        local_player_angle = math.degrees(self.game.player.angle)
+        network_player_angle = math.degrees(self.angle)
+        angle_difference = (network_player_angle - local_player_angle) % 360
+
         min_difference = float("inf")
         #closest_direction = None
         sprite_directions = self.get_sprite_direction()
         for direction, angle_range in sprite_directions.items():
             lower_bound, upper_bound = angle_range
-            difference = abs(adjusted_angle - lower_bound)
+            difference = abs(angle_difference - lower_bound)
             if difference < min_difference:
                 min_difference = difference
-                #closest_direction = direction
-                #print("network player closest direction is", direction)
                 self.image = direction
 
 
