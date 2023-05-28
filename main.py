@@ -71,7 +71,7 @@ class Game:
         self.pathfinding = PathFinding(self)
         self.player.set_player_class(player_class)
         self.player.set_player_name(player_name)
-        pg.mixer.music.play(-1)
+        #pg.mixer.music.play(-1)
 
     def update(self):
         self.player.update()
