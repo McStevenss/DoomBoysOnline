@@ -2,6 +2,8 @@ import pygame as pg
 from settings import *
 
 
+
+
 class ObjectRenderer:
     def __init__(self, game):
         self.game = game
@@ -17,10 +19,22 @@ class ObjectRenderer:
         self.game_over_image = self.get_texture('resources/textures/game_over.png', RES)
         self.win_image = self.get_texture('resources/textures/win.png', RES)
 
+        self.font = pg.font.Font('freesansbold.ttf', 32)
+
+
     def draw(self):
         self.draw_background()
         self.render_game_objects()
         self.draw_player_health()
+       # self.draw_player_names()
+
+    # def draw_player_names(self): 
+        
+    #     nothing = (0, 0, 0)     
+    #     for player in self.game.player_list:
+    #         network_player = self.game.player_list[player]
+    #         if network_player.ray_cast_value:
+               
 
     def win(self):
         self.screen.blit(self.win_image, (0, 0))
@@ -46,8 +60,24 @@ class ObjectRenderer:
 
     def render_game_objects(self):
         list_objects = sorted(self.game.raycasting.objects_to_render, key=lambda t: t[0], reverse=True)
-        for depth, image, pos in list_objects:
-            self.screen.blit(image, pos)
+        for i in range(len(list_objects)):
+            if len(list_objects[i]) != 4:
+                depth, image, pos = list_objects[i]
+                self.screen.blit(image, pos)
+            else:
+                depth, image, pos, player = list_objects[i]
+                green = (0, 255, 0)
+                text = self.font.render(f'{player.name}', True, green)
+                textRect = text.get_rect()
+
+                proj = SCREEN_DIST / player.norm_dist * player.SPRITE_SCALE
+                proj_width, proj_height = proj * player.IMAGE_RATIO, proj
+
+                textRect.center = (player.screenPos[0] + proj_width // 2, player.screenPos[1] + proj_height)
+                self.screen.blit(image, pos)
+                self.screen.blit(text,textRect)
+               
+            
 
     @staticmethod
     def get_texture(path, res=(TEXTURE_SIZE, TEXTURE_SIZE)):

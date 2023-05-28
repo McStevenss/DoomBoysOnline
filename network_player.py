@@ -23,6 +23,7 @@ class network_player:
         self.game = game
         self.x = x
         self.y = y
+        self.screenPos = (0,0)
         self.angle = angle #PLAYER_ANGLE
         self.angle_range = {}
         self.shot = shot
@@ -130,7 +131,8 @@ class network_player:
         height_shift = proj_height * self.SPRITE_HEIGHT_SHIFT
         pos = self.screen_x - self.sprite_half_width, HALF_HEIGHT - proj_height // 2 + height_shift
 
-        self.game.raycasting.objects_to_render.append((self.norm_dist, image, pos))
+        self.game.raycasting.objects_to_render.append((self.norm_dist, image, pos, self))
+        self.screenPos = pos
     
     def get_sprite(self):
         player = self.game.player
