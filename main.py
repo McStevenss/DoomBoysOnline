@@ -56,6 +56,7 @@ class Game:
         self.delta_time = 1
         self.global_trigger = False
         self.global_event = pg.USEREVENT + 0
+        self.player_hit_event = pg.USEREVENT + 1
         pg.time.set_timer(self.global_event, 40)
         self.new_game()
  
@@ -103,6 +104,10 @@ class Game:
             elif event.type == self.global_event:
                 self.global_trigger = True
             self.player.single_fire_event(event)
+
+            if event.type == self.player_hit_event:
+                s.send(pickle.dumps(['damaged_player', event.data, self.weapon.damage]))
+                print("Network player hit:", event.data, "dmg:", self.weapon.damage)
 
     def run(self):
         #self.player = Player(self)

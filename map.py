@@ -36,6 +36,8 @@ mini_map = [
     [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
 ]
 
+mini_map2 = mini_map.copy()
+
 
 class Map:
     def __init__(self, game):

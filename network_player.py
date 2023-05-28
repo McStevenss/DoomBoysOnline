@@ -36,6 +36,8 @@ class network_player:
         self.SPRITE_SCALE = 0.8
         self.IMAGE_RATIO = self.IMAGE_WIDTH / self.image.get_height()
         self.SPRITE_HEIGHT_SHIFT = 0.25
+        self.ray_cast_value = False
+        self.player_hit_event = pg.event.Event(self.game.player_hit_event,data=self.playerID)
         # diagonal movement correction
         self.diag_move_corr = 1 / math.sqrt(2)
 
@@ -89,6 +91,8 @@ class network_player:
     
     def update(self):
         self.get_sprite()
+        self.ray_cast_value = self.ray_cast_player_to_network_player()
+        self.check_hit_in_player()
     
     def get_sprite_direction(self):
         sprite_directions = {
@@ -163,47 +167,77 @@ class network_player:
         if -self.IMAGE_HALF_WIDTH < self.screen_x < (WIDTH + self.IMAGE_HALF_WIDTH) and self.norm_dist > 0.5:
             self.get_sprite_projection()
 
+    
+    def ray_cast_player_to_network_player(self):
+        if self.game.player.map_pos == self.map_pos:
+            return True
 
+        wall_dist_v, wall_dist_h = 0, 0
+        player_dist_v, player_dist_h = 0, 0
 
-    def movement(self):
-        sin_a = math.sin(self.angle)
-        cos_a = math.cos(self.angle)
-        dx, dy = 0, 0
-        speed = PLAYER_SPEED * self.game.delta_time
-        speed_sin = speed * sin_a
-        speed_cos = speed * cos_a
+        ox, oy = self.game.player.pos
+        x_map, y_map = self.game.player.map_pos
 
-        keys = pg.key.get_pressed()
-        num_key_pressed = -1
-        if keys[pg.K_w]:
-            num_key_pressed += 1
-            dx += speed_cos
-            dy += speed_sin
-        if keys[pg.K_s]:
-            num_key_pressed += 1
-            dx += -speed_cos
-            dy += -speed_sin
-        if keys[pg.K_a]:
-            num_key_pressed += 1
-            dx += speed_sin
-            dy += -speed_cos
-        if keys[pg.K_d]:
-            num_key_pressed += 1
-            dx += -speed_sin
-            dy += speed_cos
+        ray_angle = self.theta
 
-        # diag move correction
-        if num_key_pressed:
-            dx *= self.diag_move_corr
-            dy *= self.diag_move_corr
+        sin_a = math.sin(ray_angle)
+        cos_a = math.cos(ray_angle)
 
-        self.check_wall_collision(dx, dy)
+        # horizontals
+        y_hor, dy = (y_map + 1, 1) if sin_a > 0 else (y_map - 1e-6, -1)
 
-        # if keys[pg.K_LEFT]:
-        #     self.angle -= PLAYER_ROT_SPEED * self.game.delta_time
-        # if keys[pg.K_RIGHT]:
-        #     self.angle += PLAYER_ROT_SPEED * self.game.delta_time
-        self.angle %= math.tau
+        depth_hor = (y_hor - oy) / sin_a
+        x_hor = ox + depth_hor * cos_a
+
+        delta_depth = dy / sin_a
+        dx = delta_depth * cos_a
+
+        for i in range(MAX_DEPTH):
+            tile_hor = int(x_hor), int(y_hor)
+            if tile_hor == self.map_pos:
+                player_dist_h = depth_hor
+                break
+            if tile_hor in self.game.map.world_map:
+                wall_dist_h = depth_hor
+                break
+            x_hor += dx
+            y_hor += dy
+            depth_hor += delta_depth
+
+        # verticals
+        x_vert, dx = (x_map + 1, 1) if cos_a > 0 else (x_map - 1e-6, -1)
+
+        depth_vert = (x_vert - ox) / cos_a
+        y_vert = oy + depth_vert * sin_a
+
+        delta_depth = dx / cos_a
+        dy = delta_depth * sin_a
+
+        for i in range(MAX_DEPTH):
+            tile_vert = int(x_vert), int(y_vert)
+            if tile_vert == self.map_pos:
+                player_dist_v = depth_vert
+                break
+            if tile_vert in self.game.map.world_map:
+                wall_dist_v = depth_vert
+                break
+            x_vert += dx
+            y_vert += dy
+            depth_vert += delta_depth
+
+        player_dist = max(player_dist_v, player_dist_h)
+        wall_dist = max(wall_dist_v, wall_dist_h)
+
+        if 0 < player_dist < wall_dist or not wall_dist:
+            return True
+        return False
+    
+    def check_hit_in_player(self):
+        if self.ray_cast_value and self.game.player.shot:
+            if HALF_WIDTH - self.sprite_half_width < self.screen_x < HALF_WIDTH + self.sprite_half_width:
+                self.game.sound.npc_pain.play()
+                self.game.player.shot = False
+                pg.event.post(self.player_hit_event)
 
 
     @property

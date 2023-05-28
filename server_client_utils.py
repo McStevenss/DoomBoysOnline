@@ -61,19 +61,6 @@ def handle_connection(game, player: Player, s, playerList: player_list):
                 print("player list len", len(playerList.get_players()))
                 s.send(pickle.dumps(['new_player', playerid, player.name ,player.class_id]))
 
-            # if gameEvent[0] == 'existing_players':
-            #     print("Got data to construct new players!")
-            #     gameEvent.pop(0)
-            #     for player_data in gameEvent:
-            #         playerId = player_data[0]
-            #         playerName = player_data[1]
-            #         player_x, player_y = player_data[2], player_data[3]
-            #         player_class = player_data[4]
-            #         player_hp = player_data[5]
-            #         angle = player_data[6]
-            #         existing_player = network_player(game,playerId,player_class,playerName, player_x,player_y,angle,health=player_hp)
-            #         playerList.add_player(existing_player, playerId)
-
             if gameEvent[0] == 'remove_player':
                 print("trying to remove player", gameEvent[1])
                 new_player_list = playerList.get_players()
@@ -81,6 +68,22 @@ def handle_connection(game, player: Player, s, playerList: player_list):
                 print("list", new_player_list)
                 del new_player_list[gameEvent[1]]
                 playerList.set_playerList(new_player_list)
+
+            if gameEvent[0] == 'damaged_player':
+                damaged_player_id = gameEvent[1]
+                damage = gameEvent[2]
+                if player.playerID != damaged_player_id:
+                    print("damaged player", damaged_player_id)
+                    print("player list", playerList)
+                    updated_player_list = playerList.get_players()
+                    updated_player_list[gameEvent[1]].health -= damage
+                    playerList.set_playerList(updated_player_list)
+                else:
+                    print("You took damage!")
+                    if player.health - damage < 0:
+                        player.health = 0
+                    else:
+                        player.health -= damage
 
             if gameEvent[0] == 'new_player':
                 playerId = gameEvent[1]

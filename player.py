@@ -132,7 +132,6 @@ class Player:
         self.angle += self.rel * MOUSE_SENSITIVITY * self.game.delta_time
 
         if self.angle != self.prevAngle:
-            print(self.angle, math.degrees(self.angle))
             self.hasMoved = True
 
     def update(self):

@@ -56,6 +56,11 @@ def handle_message(message, outgoing, player_list):
         update = [message[0]]
         update.append([playerid, player_list[playerid].name ,x, y, player_list[playerid].Class, health, angle])
 
+    if message[0] == 'damaged_player':
+        damaged_player_id = message[1]
+        damage = message[2]
+        player_list[damaged_player_id].health = player_list[damaged_player_id].health - damage
+        update = message
 
     if message[0] == 'new_player':
         print("New player joined!")
