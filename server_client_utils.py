@@ -4,8 +4,8 @@ import random
 import pickle
 import time
 from player import *
-from network_player import *
 from player_list import *
+from network_player import *
 
 import pickle
 import select
@@ -47,31 +47,32 @@ def handle_connection(game, player: Player, s, playerList: player_list):
                 if gameEvent[0][0] == 'existing_players': 
                     gameEvent[0].pop(0)
                     for player_data in gameEvent[0]:
-                        playerId = player_data[0]
-                        playerName = player_data[1]
-                        player_x, player_y = player_data[2], player_data[3]
-                        player_class = player_data[4]
-                        player_hp = player_data[5]
-                        angle = player_data[6]
-                        existing_player = network_player(game,playerId,player_class,playerName, player_x,player_y,angle,health=player_hp)
-                        playerList.add_player(existing_player, playerId)
+                        if player_data[0] != playerid:
+                            playerId = player_data[0]
+                            playerName = player_data[1]
+                            player_x, player_y = player_data[2], player_data[3]
+                            player_class = player_data[4]
+                            player_hp = player_data[5]
+                            angle = player_data[6]
+                            existing_player = network_player(game,playerId,player_class,playerName, player_x,player_y,angle,health=player_hp)
+                            playerList.add_player(existing_player, playerId)
 
                 #Tell other players a new player has connected
                 print("player list len", len(playerList.get_players()))
                 s.send(pickle.dumps(['new_player', playerid, player.name ,player.class_id]))
 
-            if gameEvent[0] == 'existing_players':
-                print("Got data to construct new players!")
-                gameEvent.pop(0)
-                for player_data in gameEvent:
-                    playerId = player_data[0]
-                    playerName = player_data[1]
-                    player_x, player_y = player_data[2], player_data[3]
-                    player_class = player_data[4]
-                    player_hp = player_data[5]
-                    angle = player_data[6]
-                    existing_player = network_player(game,playerId,player_class,playerName, player_x,player_y,angle,health=player_hp)
-                    playerList.add_player(existing_player, playerId)
+            # if gameEvent[0] == 'existing_players':
+            #     print("Got data to construct new players!")
+            #     gameEvent.pop(0)
+            #     for player_data in gameEvent:
+            #         playerId = player_data[0]
+            #         playerName = player_data[1]
+            #         player_x, player_y = player_data[2], player_data[3]
+            #         player_class = player_data[4]
+            #         player_hp = player_data[5]
+            #         angle = player_data[6]
+            #         existing_player = network_player(game,playerId,player_class,playerName, player_x,player_y,angle,health=player_hp)
+            #         playerList.add_player(existing_player, playerId)
 
             if gameEvent[0] == 'remove_player':
                 print("trying to remove player", gameEvent[1])
@@ -100,9 +101,13 @@ def handle_connection(game, player: Player, s, playerList: player_list):
 
                 #loop through each player location
                 for player_data in gameEvent:
+                    #playerid, player_list[playerid].name ,x, y, player_list[playerid].Class, health, angle])
                     if player_data[0] != player.playerID:
-                        Player_list[player_data[0]].x = player_data[1]
-                        Player_list[player_data[0]].y = player_data[2]
+                        Player_list[player_data[0]].x = player_data[2]
+                        Player_list[player_data[0]].y = player_data[3]
+                        Player_list[player_data[0]].name = player_data[1]
+                        Player_list[player_data[0]].health = player_data[5]
+                        Player_list[player_data[0]].angle = player_data[6]
 
                 
                 playerList.set_playerList(Player_list)

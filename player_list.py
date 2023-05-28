@@ -1,7 +1,7 @@
 from settings import *
 import pygame as pg
 import math
-from network_player import *
+import network_player
 
 
 
@@ -15,6 +15,7 @@ class player_list:
         new_list = self.get_players()
         new_list[id] = player
         self.set_playerList(new_list)
+        print("Added new player")
     
 
     def get_players(self):

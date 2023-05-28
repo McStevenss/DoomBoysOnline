@@ -54,21 +54,23 @@ def handle_message(message, outgoing, player_list):
         player_list[playerid].angle = angle
         message[0] = 'player_locations'
         update = [message[0]]
-        update.append([playerid, x, y, player_list[playerid].Class, health, angle])
+        update.append([playerid, player_list[playerid].name ,x, y, player_list[playerid].Class, health, angle])
 
 
     if message[0] == 'new_player':
+        print("New player joined!")
         playerid = message[1]
         playerName = message[2]
         playerClass = message[3]
 
-        if playerid not in player_list:
-            player_list[playerid] = Player(playerid,playerName,playerClass)
+        # if playerid not in player_list:
+        player_list[playerid] = Player(playerid,playerName,playerClass)
 
         update = message
 
     if message[0] == 'remove_player':
         try:
+            print("Player",player_list[message[1]].name, "has left")
             del player_list[message[1]]
         except:
             print("failed to delete id", message[1])

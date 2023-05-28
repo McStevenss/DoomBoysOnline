@@ -77,7 +77,7 @@ class network_player:
     def animate(self, images):
         if self.animation_trigger:
             images.rotate(-1)
-            self.image = images[0]
+            self.image = self.idle_images
     
     def get_images(self, path):
         images = deque()
@@ -90,13 +90,27 @@ class network_player:
     def update(self):
         self.get_sprite()
     
-    def get_angle_range(self):
-        sprite_angle_ranges = {
-        self.idle_images[0]: (0, math.pi/4),     # Angle range for sprite1
-        self.idle_images[1]: (math.pi/4, math.pi/2)    # Angle range for sprite2
-        # Add more sprite angle ranges as needed
+    def get_sprite_direction(self):
+        sprite_directions = {
+        #FRONT
+        self.idle_images[0]: (157.5, 202.5),
+        #LEFT_FRONT
+        self.idle_images[1]: (202.5, 247.5),
+        #LEFT_SIDE
+        self.idle_images[2]: (247.5, 292.5),
+        #LEFT BACK
+        self.idle_images[3]: (292.5, 337.5),
+        #BACK
+        self.idle_images[4]: (337.5, 22.5),
+        #RIGHT BACK
+        self.idle_images[5]: (22.5, 67.5),
+        #RIGHT
+        self.idle_images[6]: (67.5, 112.5),
+        #FRONT RIGHT
+        self.idle_images[7]: (112.5, 157.5)
+        
         }
-        self.angle_range = sprite_angle_ranges
+        return sprite_directions
     
     @property
     def map_pos(self):
@@ -116,6 +130,28 @@ class network_player:
     
     def get_sprite(self):
         player = self.game.player
+
+        relative_angle = math.atan2(self.game.player.angle, self.angle)
+        relative_angle_degrees = math.degrees(relative_angle)
+        relative_angle_degrees = (relative_angle_degrees + 360) % 360  # Ensure angle is within 0-360 range
+        #adjust for negative quadrants
+        if relative_angle_degrees > 180:
+            relative_angle_degrees -= 360
+        # Calculate the absolute viewing angle in degrees
+        viewing_angle_degrees = math.degrees(self.game.player.angle)
+        
+        # Calculate the viewing angle relative to the sprite directions
+        adjusted_angle = relative_angle_degrees - viewing_angle_degrees
+
+        print("local player:",self.game.player.angle ,"network player", self.angle)
+        # print("relative angle:", relative_angle)
+        # print("relative_angle_degrees:", relative_angle_degrees)
+        # print("adjusted_angle:", adjusted_angle)
+        
+        adjusted_angle = (adjusted_angle + 360) % 360  # Ensure angle is within 0-360 range
+        print("adjusted_angle 360 range:", adjusted_angle)
+
+
         dx = self.x - player.x
         dy = self.y - player.y
         self.dx, self.dy = dx, dy
@@ -128,16 +164,24 @@ class network_player:
         delta_rays = delta / DELTA_ANGLE
         self.screen_x = (HALF_NUM_RAYS + delta_rays) * SCALE
 
+        min_difference = float("inf")
+        #closest_direction = None
+        sprite_directions = self.get_sprite_direction()
+        for direction, angle_range in sprite_directions.items():
+            lower_bound, upper_bound = angle_range
+            difference = abs(adjusted_angle - lower_bound)
+            if difference < min_difference:
+                min_difference = difference
+                #closest_direction = direction
+                #print("network player closest direction is", direction)
+                self.image = direction
+
+
         self.dist = math.hypot(dx, dy)
         self.norm_dist = self.dist * math.cos(delta)
         if -self.IMAGE_HALF_WIDTH < self.screen_x < (WIDTH + self.IMAGE_HALF_WIDTH) and self.norm_dist > 0.5:
             self.get_sprite_projection()
 
-               # Update sprite based on angle
-        for image, angle_range in self.angle_range.items():
-            if angle_range[0] <= self.theta <= angle_range[1]:
-                self.image = image
-                break
 
 
     def movement(self):

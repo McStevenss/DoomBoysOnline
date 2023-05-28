@@ -10,6 +10,7 @@ class Player:
         self.game = game
         self.x, self.y = PLAYER_POS
         self.angle = PLAYER_ANGLE
+        self.angleDeg = PLAYER_ANGLE
         self.shot = False
         self.health = PLAYER_MAX_HEALTH
         self.rel = 0
@@ -131,7 +132,7 @@ class Player:
         self.angle += self.rel * MOUSE_SENSITIVITY * self.game.delta_time
 
         if self.angle != self.prevAngle:
-            print(self.angle, self.prevAngle)
+            print(self.angle, math.degrees(self.angle))
             self.hasMoved = True
 
     def update(self):

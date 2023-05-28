@@ -79,11 +79,7 @@ class MainServer(asyncore.dispatcher):
     #Generate already connected players.
     existing_player_data = generate_existing_players(player_list)
     conn.send(pickle.dumps(['id update', playerid,existing_player_data]))
-
-
-    #conn.send(pickle.dumps(existing_player_data))
-   #conn.send(pickle.dumps(existing_player_data))
-    print(f"sending existing data: {existing_player_data}")
+    
     g_player_id = g_player_id + 1
     client_Servers[playerid]= SecondaryServer(conn)
 
