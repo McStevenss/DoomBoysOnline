@@ -11,8 +11,11 @@ class player_list:
     player_list = {}
 
     def add_player(self, player: network_player, id):
-        if id not in self.player_list:
-            self.player_list[id] = player
+        #refresh list
+        new_list = self.get_players()
+        new_list[id] = player
+        self.set_playerList(new_list)
+    
 
     def get_players(self):
         return self.player_list

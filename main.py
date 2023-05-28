@@ -76,12 +76,11 @@ class Game:
     def update(self):
         self.player.update()
         self.raycasting.update()
-        test = Player_list.get_players()
         self.object_handler.update(Player_list.get_players())
         self.weapon.update()
         pg.display.flip()
         self.delta_time = self.clock.tick(FPS)
-        pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
+        pg.display.set_caption(f'FPS:{self.clock.get_fps() :.1f}, Playername: {player_name}, Class: {player_class}')
 
     def draw(self):
         # self.screen.fill('black')
@@ -96,6 +95,9 @@ class Game:
         self.global_trigger = False
         for event in pg.event.get():
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+                s.send(pickle.dumps(['remove_player', self.player.playerID]))
+                time.sleep(1)
+                s.close()
                 pg.quit()
                 sys.exit()
             elif event.type == self.global_event:

@@ -23,7 +23,7 @@ class ObjectHandler:
         self.npc_types = [SoldierNPC, CacoDemonNPC, CyberDemonNPC]
         self.weights = [70, 20, 10]
         self.restricted_area = {(i, j) for i in range(10) for j in range(10)}
-        self.spawn_npc()
+        #   self.spawn_npc()
         #add_player()
         
         # sprite map
@@ -89,6 +89,3 @@ class ObjectHandler:
 
     def add_sprite(self, sprite):
         self.sprite_list.append(sprite)
-
-    # def add_players(self,):
-    #     self.player_List = self.player_List.get_players()

@@ -24,7 +24,7 @@ class network_player:
         self.x = x
         self.y = y
         self.angle = angle #PLAYER_ANGLE
-        self.angle_range = []
+        self.angle_range = {}
         self.shot = shot
         self.health = health
         self.rel = rel
@@ -73,6 +73,11 @@ class network_player:
                 self.death_images.rotate(-1)
                 self.image = self.death_images[0]
                 self.frame_counter += 1
+
+    def animate(self, images):
+        if self.animation_trigger:
+            images.rotate(-1)
+            self.image = images[0]
     
     def get_images(self, path):
         images = deque()
@@ -128,6 +133,12 @@ class network_player:
         if -self.IMAGE_HALF_WIDTH < self.screen_x < (WIDTH + self.IMAGE_HALF_WIDTH) and self.norm_dist > 0.5:
             self.get_sprite_projection()
 
+               # Update sprite based on angle
+        for image, angle_range in self.angle_range.items():
+            if angle_range[0] <= self.theta <= angle_range[1]:
+                self.image = image
+                break
+
 
     def movement(self):
         sin_a = math.sin(self.angle)
@@ -169,26 +180,6 @@ class network_player:
         #     self.angle += PLAYER_ROT_SPEED * self.game.delta_time
         self.angle %= math.tau
 
-
-
-    # def draw(self):
-    #     pg.draw.line(self.game.screen, 'yellow', (self.x * 100, self.y * 100),
-    #                 (self.x * 100 + WIDTH * math.cos(self.angle),
-    #                  self.y * 100 + WIDTH * math. sin(self.angle)), 2)
-    #     pg.draw.circle(self.game.screen, 'green', (self.x * 100, self.y * 100), 15)
-
-    # def mouse_control(self):
-    #     mx, my = pg.mouse.get_pos()
-    #     if mx < MOUSE_BORDER_LEFT or mx > MOUSE_BORDER_RIGHT:
-    #         pg.mouse.set_pos([HALF_WIDTH, HALF_HEIGHT])
-    #     self.rel = pg.mouse.get_rel()[0]
-    #     self.rel = max(-MOUSE_MAX_REL, min(MOUSE_MAX_REL, self.rel))
-    #     self.angle += self.rel * MOUSE_SENSITIVITY * self.game.delta_time
-
-    # def update(self):
-    #     self.movement()
-    #     # self.mouse_control()
-    #     # self.recover_health()
 
     @property
     def pos(self):

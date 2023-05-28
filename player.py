@@ -20,6 +20,7 @@ class Player:
         self.diag_move_corr = 1 / math.sqrt(2)
         self.prevx = 0
         self.prevy = 0
+        self.prevAngle = 0
         self.hasMoved = True
 
     def recover_health(self):
@@ -33,7 +34,6 @@ class Player:
             return True
     
     def set_player_id(self, id):
-        print("Set local player id to ", id)
         self.playerID = id
 
     def set_player_class(self,classId):
@@ -129,6 +129,10 @@ class Player:
         self.rel = pg.mouse.get_rel()[0]
         self.rel = max(-MOUSE_MAX_REL, min(MOUSE_MAX_REL, self.rel))
         self.angle += self.rel * MOUSE_SENSITIVITY * self.game.delta_time
+
+        if self.angle != self.prevAngle:
+            print(self.angle, self.prevAngle)
+            self.hasMoved = True
 
     def update(self):
         self.movement()
