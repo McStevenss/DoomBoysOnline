@@ -111,6 +111,8 @@ def handle_connection(game, player: Player, s, playerList: player_list):
                         Player_list[player_data[0]].name = player_data[1]
                         Player_list[player_data[0]].health = player_data[5]
                         Player_list[player_data[0]].angle = player_data[6]
+                        Player_list[player_data[0]].dx = player_data[7]
+                        Player_list[player_data[0]].dy = player_data[8]
 
                 
                 playerList.set_playerList(Player_list)

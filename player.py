@@ -2,17 +2,23 @@ from settings import *
 import pygame as pg
 import math
 
-
-class Player:
+class BasePlayer:
     def __init__(self, game):
         self.playerID = 0
-        self.name = "Noname"
+        self.name = "default"
         self.game = game
         self.x, self.y = PLAYER_POS
         self.angle = PLAYER_ANGLE
         self.angleDeg = PLAYER_ANGLE
         self.shot = False
         self.health = PLAYER_MAX_HEALTH
+        self.alive = True
+        self.class_Id = 0 #DEFAULT CLASS
+        self.dx, self.dy = 0,0
+
+class Player(BasePlayer):
+    def __init__(self, game):
+        super().__init__(game)
         self.rel = 0
         self.health_recovery_delay = 700
         self.time_prev = pg.time.get_ticks()
@@ -23,6 +29,8 @@ class Player:
         self.prevy = 0
         self.prevAngle = 0
         self.hasMoved = True
+        self.prevDx, self.prevDy = 0,0
+        
 
     def recover_health(self):
         if self.check_health_recovery_delay() and self.health < PLAYER_MAX_HEALTH:
@@ -67,6 +75,7 @@ class Player:
         sin_a = math.sin(self.angle)
         cos_a = math.cos(self.angle)
         dx, dy = 0, 0
+        
         speed = PLAYER_SPEED * self.game.delta_time
         speed_sin = speed * sin_a
         speed_cos = speed * cos_a
@@ -95,12 +104,14 @@ class Player:
             dx *= self.diag_move_corr
             dy *= self.diag_move_corr
 
-        if self.x != self.prevx or self.y != self.prevy:
+        self.dx, self.dy = dx, dy
+        if self.x != self.prevx or self.y != self.prevy or self.prevDx != self.dx or self.prevDy != self.dy:
             self.hasMoved = True
-        #print(f"x {self.x}, y{self.y}")
 
         self.check_wall_collision(dx, dy)
 
+
+        #FOR KEY MOVEMENTS
         # if keys[pg.K_LEFT]:
         #     self.angle -= PLAYER_ROT_SPEED * self.game.delta_time
         # if keys[pg.K_RIGHT]:

@@ -156,17 +156,21 @@ def handle_connection(game, player: Player, playerList: player_list, gameEvent):
                 Player_list[player_data[0]].name = player_data[1]
                 Player_list[player_data[0]].health = player_data[5]
                 Player_list[player_data[0]].angle = player_data[6]
+                Player_list[player_data[0]].dx = player_data[7]
+                Player_list[player_data[0]].dy = player_data[8]
 
         
         playerList.set_playerList(Player_list)
 
 def updatePlayerOnServer(game, player: Player):
     if player.hasMoved == True:
-        game.send_message(['position_update', player.playerID, player.x, player.y, player.health, player.angle])
+        game.send_message(['position_update', player.playerID, player.x, player.y, player.health, player.angle, player.dx, player.dy])
         player.hasMoved = False
         player.prevx = player.x
         player.prevy = player.y
         player.prevAngle = player.angle
+        player.prevDx = player.dx
+        player.prevDy = player.dy
 
 
 

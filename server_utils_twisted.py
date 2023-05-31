@@ -39,13 +39,15 @@ def broadcast_to_clients(message,outgoing, player_list):
 
 def handle_message_twisted(connections, message, outgoing, player_list):      
     update = None
-
+    #game.send_message(['position_update', player.playerID, player.x, player.y, player.health, player.angle, player.dx, player.dy])
     if message[0] == 'position_update':
         playerid = message[1]
         x = message[2]
         y = message[3]
         health = message[4]
         angle = message[5]
+        dx = message[6]
+        dy = message[7]
 
         player_list[playerid].x = x
         player_list[playerid].y = y
@@ -53,7 +55,7 @@ def handle_message_twisted(connections, message, outgoing, player_list):
         player_list[playerid].angle = angle
         message[0] = 'player_locations'
         update = [message[0]]
-        update.append([playerid, player_list[playerid].name ,x, y, player_list[playerid].Class, health, angle])
+        update.append([playerid, player_list[playerid].name ,x, y, player_list[playerid].Class, health, angle, dx, dy])
 
     if message[0] == 'damaged_player':
         damaged_player_id = message[1]

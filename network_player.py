@@ -5,9 +5,14 @@ import os
 from collections import deque
 from player import *
 
-class network_player:
-    def __init__(self, game, playerID=0, classId=0 ,name="Noname", x=0, y=0, angle=0, shot=False, health=100, rel=0, path='resources/sprites/npc/soldier/'):
-        
+class network_player(BasePlayer):
+    def __init__(self, game, playerID=0, class_Id=0 ,name="Noname", x=0, y=0, angle=0, shot=False, health=100, rel=0, path='resources/sprites/npc/soldier/'):
+        super().__init__(game)
+        self.playerID = playerID
+        self.name = name
+        self.x, self.y = x,y
+        self.class_Id= class_Id
+        self.game = game
         self.path = path
         self.attack_images = self.get_images(self.path + '/attack')
         self.death_images = self.get_images(self.path + '/death')
@@ -18,11 +23,7 @@ class network_player:
         self.image = pg.image.load(self.imagePath).convert_alpha()
         self.IMAGE_WIDTH = self.image.get_width()
         self.IMAGE_HALF_WIDTH = self.image.get_width() // 2
-        self.playerID = playerID
-        self.name = name
-        self.game = game
-        self.x = x
-        self.y = y
+        self.playerID = playerID #
         self.screenPos = (0,0)
         self.angle = angle #PLAYER_ANGLE
         self.angle_range = {}
@@ -32,15 +33,12 @@ class network_player:
         self.frame_counter = 0
         self.alive = True
         self.death_images = 0
-        self.classId = classId
         self.time_prev = pg.time.get_ticks()
         self.SPRITE_SCALE = 0.8
         self.IMAGE_RATIO = self.IMAGE_WIDTH / self.image.get_height()
         self.SPRITE_HEIGHT_SHIFT = 0.25
         self.ray_cast_value = False
         self.player_hit_event = pg.event.Event(self.game.player_hit_event,data=self.playerID)
-        # diagonal movement correction
-        self.diag_move_corr = 1 / math.sqrt(2)
 
 
     def set_player_id(self, id):

@@ -37,6 +37,7 @@ class Player:
     self.Class = Class
     self.health = health
     self.angle = angle
+    self.dx, self.dy = 0,0
 
 
 

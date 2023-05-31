@@ -31,7 +31,6 @@ class RayCasting:
                 wall_pos = (ray * SCALE, 0)
 
             self.objects_to_render.append((depth, wall_column, wall_pos)) 
-            ray_angle += DELTA_ANGLE
 
     def ray_cast(self):
         self.ray_casting_result = []
@@ -96,10 +95,10 @@ class RayCasting:
             # projection
             proj_height = SCREEN_DIST / (depth + 0.0001)
 
+            ray_angle += DELTA_ANGLE
             # ray casting result
             self.ray_casting_result.append((depth, proj_height, texture, offset))
 
-            ray_angle += DELTA_ANGLE
 
     def update(self):
         self.ray_cast()

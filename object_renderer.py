@@ -8,7 +8,7 @@ class ObjectRenderer:
     def __init__(self, game):
         self.game = game
         self.screen = game.screen
-        self.wall_textuxres = self.load_wall_textures()
+        self.wall_textures = self.load_wall_textures()
         self.sky_image = self.get_texture('resources/textures/sky.png', (WIDTH, HALF_HEIGHT))
         self.sky_offset = 0
         self.blood_screen = self.get_texture('resources/textures/blood_screen.png', RES)
@@ -63,10 +63,8 @@ class ObjectRenderer:
         for i in range(len(list_objects)):
 
             if len(list_objects[i]) != 4:
-
                 depth, image, pos = list_objects[i]
                 self.screen.blit(image, pos)
-                print("pos", pos)
             else:
                 depth, image, pos, player = list_objects[i]
                 green = (0, 255, 0)
@@ -86,6 +84,7 @@ class ObjectRenderer:
     def get_texture(path, res=(TEXTURE_SIZE, TEXTURE_SIZE)):
         texture = pg.image.load(path).convert_alpha()
         return pg.transform.scale(texture, res)
+
 
     def load_wall_textures(self):
         return {

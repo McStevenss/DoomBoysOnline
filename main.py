@@ -15,6 +15,7 @@ from pathfinding import *
 #from server_client_utils import *
 from player_list import *
 from server_client_utils_twisted import *
+from classes import *
 
 import pickle
 import select
@@ -35,8 +36,6 @@ player_name = input("Whats your name name:")
 print("Welcome", player_name)
 
 Player_list = player_list()
-
-
 
 serverAddr = '127.0.0.1'
 if len(sys.argv) == 2:
@@ -67,15 +66,15 @@ class Game:
 
     def new_game(self):
         self.map = Map(self)
-        self.player = Player(self)
+        self.player = Warrior(self)
+        self.player.set_player_class(player_class)
+        self.player.set_player_name(player_name)
         self.object_renderer = ObjectRenderer(self)
         self.raycasting = RayCasting(self)
         self.object_handler = ObjectHandler(self)
         self.weapon = Weapon(self)
         self.sound = Sound(self)
         self.pathfinding = PathFinding(self)
-        self.player.set_player_class(player_class)
-        self.player.set_player_name(player_name)
         self.clientConnection = None
         #connect_to_server(serverAddr,self)
         #pg.mixer.music.play(-1)
