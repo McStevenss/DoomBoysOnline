@@ -36,14 +36,49 @@ mini_map = [
     [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
 ]
 
-mini_map2 = mini_map.copy()
+mini_map2 =  [
+    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+    [1, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 1],
+    [1, _, _, 3, 3, 3, 3, _, _, _, 2, 2, 2, _, _, 1],
+    [1, _, _, _, _, _, 4, _, _, _, 2, _, 2, _, _, 1],
+    [1, _, _, _, _, _, 4, _, _, _, 2, _, 2, _, _, 1],
+    [1, _, _, 3, 3, 3, 3, _, _, _, _, _, _, _, _, 1],
+    [1, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 1],
+    [1, _, _, _, 4, _, _, _, 4, _, _, _, _, _, _, 1],
+    [1, 1, 1, 3, 1, 3, 1, 1, 1, 3, _, _, 3, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 3, _, _, 3, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 3, _, _, 3, 1, 1, 1],
+    [1, 1, 3, 1, 1, 1, 1, 1, 1, 3, _, _, 3, 1, 1, 1],
+    [1, 4, _, _, _, _, _, _, _, _, _, _, _, _, _, 1],
+    [3, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 1],
+    [1, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 1],
+    [1, _, _, 2, _, _, _, _, _, 3, 4, _, 4, 3, _, 1],
+    [1, _, _, 5, _, _, _, _, _, _, 3, _, 3, _, _, 1],
+    [1, _, _, 2, _, _, _, _, _, _, _, _, _, _, _, 1],
+    [1, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 1],
+    [3, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 1],
+    [1, 4, _, _, _, _, _, _, 4, _, _, 4, _, _, _, 1],
+    [1, 1, 3, 3, _, _, 3, 3, 1, 3, 3, 1, 3, 1, 1, 1],
+    [1, 1, 1, 3, _, _, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 3, 3, 4, _, _, 4, 3, 3, 3, 3, 3, 3, 3, 3, 1],
+    [3, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 3],
+    [3, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 3],
+    [3, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 3],
+    [3, _, _, 5, _, _, _, 5, _, _, _, 5, _, _, _, 3],
+    [3, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 3],
+    [3, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 3],
+    [3, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 3],
+    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+]
 
 
 class Map:
     def __init__(self, game):
         self.game = game
         self.mini_map = mini_map
+        self.mini_map2 = mini_map2
         self.world_map = {}
+        self.world_map2 = {}
         self.rows = len(self.mini_map)
         self.cols = len(self.mini_map[0])
         self.get_map()
@@ -53,7 +88,32 @@ class Map:
             for i, value in enumerate(row):
                 if value:
                     self.world_map[(i, j)] = value
+        
+        for j, row in enumerate(self.mini_map2):
+            for i, value in enumerate(row):
+                if value:
+                    self.world_map2[(i, j)] = value
 
+
+
+
+    # def draw(self):
+    #     [pg.draw.rect(self.game.screen, 'darkgray', (pos[0] * 10, pos[1] * 10, 100, 100), 2)
+    #      for pos in self.world_map]
+        
     def draw(self):
-        [pg.draw.rect(self.game.screen, 'darkgray', (pos[0] * 10, pos[1] * 10, 100, 100), 2)
-         for pos in self.world_map]
+        tile_size = 10  # Adjust the tile size according to your needs
+        floor_color = (0, 0, 255)  # Color for the first tier
+        wall_color = (255, 0, 0)   # Color for the second tier
+
+        for j, row in enumerate(self.mini_map):
+            for i, value in enumerate(row):
+                if value:
+                    x = i * tile_size
+                    y = j * tile_size
+                    rect = (x, y, tile_size, tile_size)
+                    pg.draw.rect(self.game.screen, floor_color, rect)
+
+                    if value == 2:
+                        rect = (x, y - tile_size, tile_size, tile_size)
+                        pg.draw.rect(self.game.screen, wall_color, rect)

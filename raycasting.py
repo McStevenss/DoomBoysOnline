@@ -30,7 +30,8 @@ class RayCasting:
                 wall_column = pg.transform.scale(wall_column, (SCALE, HEIGHT))
                 wall_pos = (ray * SCALE, 0)
 
-            self.objects_to_render.append((depth, wall_column, wall_pos))
+            self.objects_to_render.append((depth, wall_column, wall_pos)) 
+            ray_angle += DELTA_ANGLE
 
     def ray_cast(self):
         self.ray_casting_result = []
