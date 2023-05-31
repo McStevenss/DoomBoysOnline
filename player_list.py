@@ -10,7 +10,7 @@ class player_list:
 
     player_list = {}
 
-    def add_player(self, player: network_player, id):
+    def add_player(self, player, id):
         #refresh list
         new_list = self.get_players()
         new_list[id] = player

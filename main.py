@@ -25,10 +25,10 @@ import json
 BUFFERSIZE = 2048
 
 print("Welcome to DOOM-boys-Online!")
-print("Please choose class: [0] Archer, [1] Knight, [2] Healer, [3] Mage")
+print("Please choose class: [0] Druid, [1] Rogue, [2] Warrior")
 player_class = input("Class:")
 
-classes = ["Archer", "Knight", "Healer", "Mage"]
+classes = ["Druid", "Rogue", "Warrior"]
 player_class = int(player_class) % len(classes)
 print("You chose:", classes[player_class])
 
@@ -54,6 +54,7 @@ class Game:
         self.clock = pg.time.Clock()
         self.delta_time = 1
         self.global_trigger = False
+        self.player = None
         self.global_event = pg.USEREVENT + 0
         self.player_hit_event = pg.USEREVENT + 1
         self.player_list = Player_list.get_players()
@@ -66,13 +67,14 @@ class Game:
 
     def new_game(self):
         self.map = Map(self)
-        self.player = Warrior(self)
-        self.player.set_player_class(player_class)
+       # self.player = Player(self)
+        self.player = get_class(player_class,self)
         self.player.set_player_name(player_name)
         self.object_renderer = ObjectRenderer(self)
         self.raycasting = RayCasting(self)
         self.object_handler = ObjectHandler(self)
-        self.weapon = Weapon(self)
+        self.player.set_player_class(player_class)
+        #self.weapon = Weapon(self)
         self.sound = Sound(self)
         self.pathfinding = PathFinding(self)
         self.clientConnection = None
@@ -125,7 +127,7 @@ class Game:
             self.player.single_fire_event(event)
 
             if event.type == self.player_hit_event:
-                self.send_message(['damaged_player', event.data, self.weapon.damage])
+                self.send_message(['damaged_player', event.data, self.weapon.damage, self.player.playerID])
                 print("Network player hit:", event.data, "dmg:", self.weapon.damage)
 
         if should_exit:

@@ -6,7 +6,7 @@ from collections import deque
 from player import *
 
 class network_player(BasePlayer):
-    def __init__(self, game, playerID=0, class_Id=0 ,name="Noname", x=0, y=0, angle=0, shot=False, health=100, rel=0, path='resources/sprites/npc/soldier/'):
+    def __init__(self, game, playerID=0, class_Id=0 ,name="Noname", x=0, y=0, angle=0, shot=False, health=100, rel=0, path='resources/sprites/players/Druid/'):
         super().__init__(game)
         self.playerID = playerID
         self.name = name
@@ -38,6 +38,7 @@ class network_player(BasePlayer):
         self.IMAGE_RATIO = self.IMAGE_WIDTH / self.image.get_height()
         self.SPRITE_HEIGHT_SHIFT = 0.25
         self.ray_cast_value = False
+        self.ray_cast_range = 0
         self.player_hit_event = pg.event.Event(self.game.player_hit_event,data=self.playerID)
 
 
@@ -90,7 +91,7 @@ class network_player(BasePlayer):
     
     def update(self):
         self.get_sprite()
-        self.ray_cast_value = self.ray_cast_player_to_network_player()
+        self.ray_cast_value, self.ray_cast_range = self.ray_cast_player_to_network_player()
         self.check_hit_in_player()
     
     def get_sprite_direction(self):
@@ -170,7 +171,7 @@ class network_player(BasePlayer):
     
     def ray_cast_player_to_network_player(self):
         if self.game.player.map_pos == self.map_pos:
-            return True
+            return True, 0
 
         wall_dist_v, wall_dist_h = 0, 0
         player_dist_v, player_dist_h = 0, 0
@@ -229,11 +230,11 @@ class network_player(BasePlayer):
         wall_dist = max(wall_dist_v, wall_dist_h)
 
         if 0 < player_dist < wall_dist or not wall_dist:
-            return True
-        return False
+            return True, player_dist
+        return False, player_dist
     
     def check_hit_in_player(self):
-        if self.ray_cast_value and self.game.player.shot:
+        if self.ray_cast_value and self.game.player.shot and self.ray_cast_range < self.game.weapon.weapon_range:
             if HALF_WIDTH - self.sprite_half_width < self.screen_x < HALF_WIDTH + self.sprite_half_width:
                 self.game.sound.npc_pain.play()
                 self.game.player.shot = False

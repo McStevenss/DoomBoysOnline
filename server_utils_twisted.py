@@ -60,6 +60,7 @@ def handle_message_twisted(connections, message, outgoing, player_list):
     if message[0] == 'damaged_player':
         damaged_player_id = message[1]
         damage = message[2]
+        damaging_player_id = message[3]
         player_list[damaged_player_id].health = player_list[damaged_player_id].health - damage
         update = message
 

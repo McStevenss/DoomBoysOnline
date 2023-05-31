@@ -1,9 +1,17 @@
 from settings import *
 import pygame as pg
 import math
+from collections import deque
+import os
 
 class BasePlayer:
     def __init__(self, game):
+        self.path='resources/sprites/players/Druid/'
+        self.attack_images = self.get_images(self.path + '/attack')
+        self.death_images = self.get_images(self.path + '/death')
+        self.idle_images = self.get_images(self.path + '/idle')
+        self.pain_images = self.get_images(self.path + '/pain')
+        self.walk_images = self.get_images(self.path + '/walk')
         self.playerID = 0
         self.name = "default"
         self.game = game
@@ -15,6 +23,14 @@ class BasePlayer:
         self.alive = True
         self.class_Id = 0 #DEFAULT CLASS
         self.dx, self.dy = 0,0
+
+    def get_images(self, path):
+        images = deque()
+        for file_name in os.listdir(path):
+            if os.path.isfile(os.path.join(path, file_name)):
+                img = pg.image.load(path + '/' + file_name).convert_alpha()
+                images.append(img)
+        return images
 
 class Player(BasePlayer):
     def __init__(self, game):
@@ -67,7 +83,8 @@ class Player(BasePlayer):
     def single_fire_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1 and not self.shot and not self.game.weapon.reloading:
-                self.game.sound.shotgun.play()
+                self.game.weapon.weaponSound.play()
+                #self.game.sound.shotgun.play()
                 self.shot = True
                 self.game.weapon.reloading = True
 

@@ -7,7 +7,7 @@ class Sound:
         pg.mixer.init()
         self.path = 'resources/sound/'
         self.shotgun = pg.mixer.Sound(self.path + 'shotgun.wav')
-        self.npc_pain = pg.mixer.Sound(self.path + 'npc_pain.wav')
+        self.npc_pain = pg.mixer.Sound(self.path + 'SIRHIT07.wav')
         self.npc_death = pg.mixer.Sound(self.path + 'npc_death.wav')
         self.npc_shot = pg.mixer.Sound(self.path + 'npc_attack.wav')
         self.npc_shot.set_volume(0.2)

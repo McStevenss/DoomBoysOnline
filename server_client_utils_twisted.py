@@ -7,6 +7,7 @@ import time
 from player import *
 from player_list import *
 from network_player import *
+from classes import *
 
 import pickle
 import select
@@ -117,11 +118,12 @@ def handle_connection(game, player: Player, playerList: player_list, gameEvent):
     if gameEvent[0] == 'damaged_player':
         damaged_player_id = gameEvent[1]
         damage = gameEvent[2]
+        damaging_player_id = [3]
+
         if player.playerID != damaged_player_id:
-            print("damaged player", damaged_player_id)
-            print("player list", playerList)
+            print("player", damaging_player_id, "damaged player", damaged_player_id)
             updated_player_list = playerList.get_players()
-            updated_player_list[gameEvent[1]].health -= damage
+            updated_player_list[damaged_player_id].health -= damage
             playerList.set_playerList(updated_player_list)
         else:
             print("You took damage!")
@@ -138,9 +140,12 @@ def handle_connection(game, player: Player, playerList: player_list, gameEvent):
         #only update network players)
         if playerId != player.playerID:       
             #New player connected, construct new player
-            new_Player = network_player(game, playerId, playerClass ,playerName, 1.5, 5, 0, False, 100, 0, path='resources/sprites/npc/soldier/')
+            #game, playerId, class_Id, name
+            new_player = get_class_network(game,playerId,playerClass,playerName)
+
+            #new_Player = network_player(game, playerId, playerClass ,playerName, 1.5, 5, 0, False, 100, 0)
             #Register new player in list
-            playerList.add_player(player=new_Player, id=playerId)
+            playerList.add_player(player=new_player, id=playerId)
             print(f"New player | ID:{playerId} Name:{playerName} Class:{playerClass}")
 
     if gameEvent[0] == 'player_locations':
