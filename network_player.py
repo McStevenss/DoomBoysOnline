@@ -193,7 +193,6 @@ class network_player(BasePlayer):
             self.hasMoved = True
             self.prevX = self.x
             self.prevY = self.y
-
     
     def update(self):
         self.get_sprite()
@@ -203,8 +202,7 @@ class network_player(BasePlayer):
         self.checkIfMoved()
         self.ray_cast_value, self.ray_cast_range = self.ray_cast_player_to_network_player()
         self.check_hit_in_player()
-        #self.animate_attack()
-    
+        #self.animate_attack()    
     
     def get_player_direction(self, angle_difference):
         # Define the angle ranges for each direction

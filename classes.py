@@ -34,7 +34,7 @@ class Warrior(Player):
         super().__init__(game)
         # Add additional attributes or behavior specific to the Warrior class
         self.attack_power = 10
-        self.health = 600
+        self.health = 175
         game.weapon = Axe(game)
 
 
@@ -43,7 +43,7 @@ class Druid(Player):
         super().__init__(game)
         # Add additional attributes or behavior specific to the Warrior class
         self.attack_power = 10
-        self.health = 600
+        self.health = 100
         game.weapon = HealingSpell(game)
 
 class Rogue(Player):
@@ -51,7 +51,7 @@ class Rogue(Player):
         super().__init__(game)
         # Add additional attributes or behavior specific to the Warrior class
         self.attack_power = 10
-        self.health = 600
+        self.health = 75
         game.weapon = Dagger(game)
         self.path="/resources/sprites/players/Rogue"
 
@@ -60,19 +60,19 @@ class network_Rogue(network_player):
     def __init__(self, game, playerId, name):
         super().__init__(game, playerID=playerId, name=name, path="resources/sprites/players/Rogue")
         self.attack_power = 10
-        self.health = 600
+        self.health = 75
         #self.path="/resources/sprites/players/Rogue"
 
 class network_Druid(network_player):
     def __init__(self, game, playerId, name):
         super().__init__(game, playerID=playerId, name=name, path="resources/sprites/players/Druid")
         self.attack_power = 10
-        self.health = 600
+        self.health = 100
 
 class network_Warrior(network_player):
     def __init__(self,game, playerId, name):
         super().__init__(game, playerID=playerId, name=name, path="resources/sprites/players/Knight")
         self.attack_power = 10
-        self.health = 600
+        self.health = 175
         self.animation_time = 150
         

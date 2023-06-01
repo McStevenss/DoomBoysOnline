@@ -2,8 +2,6 @@ import pygame as pg
 from settings import *
 
 
-
-
 class ObjectRenderer:
     def __init__(self, game):
         self.game = game
@@ -25,16 +23,8 @@ class ObjectRenderer:
     def draw(self):
         self.draw_background()
         self.render_game_objects()
-        self.draw_player_health()
-       # self.draw_player_names()
-
-    # def draw_player_names(self): 
-        
-    #     nothing = (0, 0, 0)     
-    #     for player in self.game.player_list:
-    #         network_player = self.game.player_list[player]
-    #         if network_player.ray_cast_value:
-               
+        #self.draw_player_health()
+        self.draw_HUD()
 
     def win(self):
         self.screen.blit(self.win_image, (0, 0))
@@ -77,8 +67,12 @@ class ObjectRenderer:
                 textRect.center = (player.screenPos[0] + proj_width // 2, player.screenPos[1] + proj_height)
                 self.screen.blit(image, pos)
                 self.screen.blit(text,textRect)
-               
-            
+
+    def draw_HUD(self):
+        green = (255, 0, 0)
+        text = self.font.render(f'Health: {self.game.player.health}', True, green)
+        textRect = text.get_rect()   
+        self.screen.blit(text,(textRect.x, textRect.y + HEIGHT - 50))            
 
     @staticmethod
     def get_texture(path, res=(TEXTURE_SIZE, TEXTURE_SIZE)):
@@ -92,5 +86,18 @@ class ObjectRenderer:
             2: self.get_texture('resources/textures/2.png'),
             3: self.get_texture('resources/textures/3.png'),
             4: self.get_texture('resources/textures/4.png'),
-            5: self.get_texture('resources/textures/5.png')
+            5: self.get_texture('resources/textures/5.png'),
+            6: self.get_texture('resources/textures/city/door.png'),
+            7: self.get_texture('resources/textures/city/mosswall_window.png'),
+            8: self.get_texture('resources/textures/city/mosswall.png'),
+            9: self.get_texture('resources/textures/city/stonewall.png'),
+            10: self.get_texture('resources/textures/fort/wall1.png'),
+            11: self.get_texture('resources/textures/fort/wall2.png'),
+            12: self.get_texture('resources/textures/fort/wall3.png'),
+            13: self.get_texture('resources/textures/mudhut/mud_door.png'),
+            14: self.get_texture('resources/textures/mudhut/mud_wall.png'),
+            15: self.get_texture('resources/textures/mudhut/mud_window.png'),
+            16: self.get_texture('resources/textures/mudhut/mud_window.png'),
+            17: self.get_texture('resources/textures/mudhut/mud_window.png')
+
         }
