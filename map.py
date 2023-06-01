@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 import cv2 as cv
 from collections import defaultdict
+from settings import *
 
 _ = False
 mini_map = [
@@ -61,12 +62,13 @@ class Map:
     
     def get_map_from_image(self, path = 'maps/test.png'):
 
-        floorColor = (255,255,255)
-        wallColor = (0,0,0)
-        mossyWallColor = (0,255,0)
+        # floorColor = (255,255,255)
+        # wallColor = (0,0,0)
+        # mossyWallColor = (0,255,0)
 
-        colorToTexture = {floorColor: False, wallColor:10, mossyWallColor:11}
+        # colorToTexture = {floorColor: False, wallColor:10, mossyWallColor:11}
 
+        # COLOR_TO_TEXTURE
         im = Image.open(path, 'r')
         im = im.convert('RGB')
 
@@ -77,7 +79,7 @@ class Map:
         for y in range(height):
             for x in range(width):
                 pixel = im.getpixel((x, y))
-                value = colorToTexture.get(pixel, False) 
+                value = COLOR_TO_TEXTURE.get(pixel, False) 
                 if value:
                     self.world_map[(x,y)] = value
         
@@ -97,3 +99,5 @@ class Map:
                     if value == 2:
                         rect = (x, y - tile_size, tile_size, tile_size)
                         pg.draw.rect(self.game.screen, wall_color, rect)
+
+      

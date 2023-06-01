@@ -97,7 +97,6 @@ class network_player(BasePlayer):
             self.image = self.pain_images[player_direction][0]
             self.frame_counter += 1
             
-            print("he has pain", self.frame_counter, len(self.pain_images[player_direction]) * 12 -1 )
         elif self.frame_counter > len(self.pain_images[player_direction]) * 12 - 1:
             self.pain = False
             self.frame_counter = 0
@@ -127,7 +126,6 @@ class network_player(BasePlayer):
         player_direction = self.get_player_direction(angle_difference)
 
         if self.animation_trigger and self.animation_trigger:
-            print(self.name, "has moved", "animation frame:",self.frame_counter)
             self.walk_images[player_direction].rotate(-1)
             self.image = self.walk_images[player_direction][0]
             self.frame_counter += 1
@@ -144,7 +142,6 @@ class network_player(BasePlayer):
             self.attack_images[player_direction].rotate(-1)
             self.image = self.attack_images[player_direction][0]
             self.attack_frame_counter += 1
-            print("he has attacked", self.attack_frame_counter, len(self.attack_images[player_direction]) - 1)
         elif self.attack_frame_counter > len(self.attack_images[player_direction]) - 1:
             self.hasAttacked = False
             self.attack_frame_counter = 0

@@ -57,16 +57,17 @@ class ObjectRenderer:
                 self.screen.blit(image, pos)
             else:
                 depth, image, pos, player = list_objects[i]
-                green = (0, 255, 0)
-                text = self.font.render(f'{player.name}', True, green)
-                textRect = text.get_rect()
+                if depth < 11:
+                    green = (0, 255, 0)
+                    text = self.font.render(f'{player.name}', True, green)
+                    textRect = text.get_rect()
 
-                proj = SCREEN_DIST / player.norm_dist * player.SPRITE_SCALE
-                proj_width, proj_height = proj * player.IMAGE_RATIO, proj
+                    proj = SCREEN_DIST / player.norm_dist * player.SPRITE_SCALE
+                    proj_width, proj_height = proj * player.IMAGE_RATIO, proj
 
-                textRect.center = (player.screenPos[0] + proj_width // 2, player.screenPos[1] + proj_height)
+                    textRect.center = (player.screenPos[0] + proj_width // 2, player.screenPos[1] + proj_height)
+                    self.screen.blit(text,textRect)
                 self.screen.blit(image, pos)
-                self.screen.blit(text,textRect)
 
     def draw_HUD(self):
         green = (255, 0, 0)
@@ -96,8 +97,5 @@ class ObjectRenderer:
             12: self.get_texture('resources/textures/fort/wall3.png'),
             13: self.get_texture('resources/textures/mudhut/mud_door.png'),
             14: self.get_texture('resources/textures/mudhut/mud_wall.png'),
-            15: self.get_texture('resources/textures/mudhut/mud_window.png'),
-            16: self.get_texture('resources/textures/mudhut/mud_window.png'),
-            17: self.get_texture('resources/textures/mudhut/mud_window.png')
-
+            15: self.get_texture('resources/textures/mudhut/mud_window.png')
         }
