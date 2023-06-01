@@ -15,7 +15,8 @@ class BasePlayer:
         self.playerID = 0
         self.name = "default"
         self.game = game
-        self.x, self.y = PLAYER_POS
+        #self.x, self.y = PLAYER_POS
+        self.x, self.y = self.game.map.spawnX, self.game.map.spawnY
         self.angle = PLAYER_ANGLE
         self.angleDeg = PLAYER_ANGLE
         self.shot = False
@@ -23,6 +24,7 @@ class BasePlayer:
         self.alive = True
         self.class_Id = 0 #DEFAULT CLASS
         self.dx, self.dy = 0,0
+
 
     def get_images(self, path):
         images = deque()

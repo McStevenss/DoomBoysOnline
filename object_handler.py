@@ -27,28 +27,11 @@ class ObjectHandler:
         #add_player()
         
         # sprite map
-        add_sprite(AnimatedSprite(game))
-        add_sprite(AnimatedSprite(game, pos=(1.5, 1.5)))
-        add_sprite(AnimatedSprite(game, pos=(1.5, 7.5)))
-        add_sprite(AnimatedSprite(game, pos=(5.5, 3.25)))
-        add_sprite(AnimatedSprite(game, pos=(5.5, 4.75)))
-        add_sprite(AnimatedSprite(game, pos=(7.5, 2.5)))
-        add_sprite(AnimatedSprite(game, pos=(7.5, 5.5)))
-        add_sprite(AnimatedSprite(game, pos=(14.5, 1.5)))
-        add_sprite(AnimatedSprite(game, pos=(14.5, 4.5)))
-        add_sprite(AnimatedSprite(game, path=self.anim_sprite_path + 'red_light/0.png', pos=(14.5, 5.5)))
-        add_sprite(AnimatedSprite(game, path=self.anim_sprite_path + 'red_light/0.png', pos=(14.5, 7.5)))
-        add_sprite(AnimatedSprite(game, path=self.anim_sprite_path + 'red_light/0.png', pos=(12.5, 7.5)))
-        add_sprite(AnimatedSprite(game, path=self.anim_sprite_path + 'red_light/0.png', pos=(9.5, 7.5)))
-        add_sprite(AnimatedSprite(game, path=self.anim_sprite_path + 'red_light/0.png', pos=(14.5, 12.5)))
-        add_sprite(AnimatedSprite(game, path=self.anim_sprite_path + 'red_light/0.png', pos=(9.5, 20.5)))
-        add_sprite(AnimatedSprite(game, path=self.anim_sprite_path + 'red_light/0.png', pos=(10.5, 20.5)))
-        add_sprite(AnimatedSprite(game, path=self.anim_sprite_path + 'red_light/0.png', pos=(3.5, 14.5)))
-        add_sprite(AnimatedSprite(game, path=self.anim_sprite_path + 'red_light/0.png', pos=(3.5, 18.5)))
-        add_sprite(AnimatedSprite(game, pos=(14.5, 24.5)))
-        add_sprite(AnimatedSprite(game, pos=(14.5, 30.5)))
-        add_sprite(AnimatedSprite(game, pos=(1.5, 30.5)))
-        add_sprite(AnimatedSprite(game, pos=(1.5, 24.5)))
+        add_sprite(SpriteObject(game, path='resources/sprites/static_sprites/pine_tree.PNG', pos=(3,19), scale=5, shift=-0.4))
+        add_sprite(SpriteObject(game, path='resources/sprites/static_sprites/pine_tree.PNG', pos=(12,13), scale=5, shift=-0.4))
+
+        # add_sprite(AnimatedSprite(game))
+        # add_sprite(AnimatedSprite(game, pos=(1.5, 1.5)))
 
         # npc map
         # add_npc(SoldierNPC(game, pos=(11.0, 19.0)))

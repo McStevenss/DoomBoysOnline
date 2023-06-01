@@ -62,11 +62,11 @@ class Game:
         pg.time.set_timer(self.global_event, 40)
         self.clientConnection = None
         self.isConnected = False
+        self.map = Map(self)
         self.new_game()
  
 
     def new_game(self):
-        self.map = Map(self)
        # self.player = Player(self)
         self.player = get_class(player_class,self)
         self.player.set_player_name(player_name)

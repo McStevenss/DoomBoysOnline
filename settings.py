@@ -70,6 +70,13 @@ mudhut_door = (1,0,25)
 mudhut_wall = (1,0,50)
 mudhut_window = (1,0,75)
 
+#STATIC SPRITES
+oak_tree = (1,25,1)
+pine_tree = (1,50,1)
+bonzai_tree = (1,75,1)
+
+#MISC
+player_spawn = (73,0,73)
 
 #DEFAULT TILES
 floorColor = (255,255,255)
@@ -77,7 +84,7 @@ wallColor = (0,0,0)
 
 COLOR_TO_TEXTURE = {
     floorColor: False,
-    wallColor: 5,
+    wallColor: 10,
     city_door: 6,
     city_mosswall_window: 7,
     city_mosswall: 8,
@@ -87,5 +94,6 @@ COLOR_TO_TEXTURE = {
     fort_wall_3: 12,
     mudhut_door: 13,
     mudhut_wall: 14,
-    mudhut_window: 15
+    mudhut_window: 15,
+    player_spawn: "spawn"
     }

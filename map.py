@@ -50,6 +50,8 @@ class Map:
         self.test_map = {}
         self.rows = len(self.mini_map)
         self.cols = len(self.mini_map[0])
+        self.spawnX = 0
+        self.spawnY = 0
         #self.get_map()
         self.get_map_from_image()
 
@@ -60,15 +62,7 @@ class Map:
                     self.world_map[(i, j)] = value
 
     
-    def get_map_from_image(self, path = 'maps/test.png'):
-
-        # floorColor = (255,255,255)
-        # wallColor = (0,0,0)
-        # mossyWallColor = (0,255,0)
-
-        # colorToTexture = {floorColor: False, wallColor:10, mossyWallColor:11}
-
-        # COLOR_TO_TEXTURE
+    def get_map_from_image(self, path = 'maps/test2.png'):
         im = Image.open(path, 'r')
         im = im.convert('RGB')
 
@@ -80,8 +74,12 @@ class Map:
             for x in range(width):
                 pixel = im.getpixel((x, y))
                 value = COLOR_TO_TEXTURE.get(pixel, False) 
-                if value:
+                if value and value != "spawn":
                     self.world_map[(x,y)] = value
+                
+                if value == "spawn":
+                    self.spawnX = x
+                    self.spawnY = y
         
     def draw(self):
         tile_size = 10  # Adjust the tile size according to your needs
