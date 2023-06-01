@@ -16,10 +16,13 @@ def get_class(class_id, game):
     
 def get_class_network(game, playerId, class_Id, name):
     if class_Id == 0:
+        print("network druid")
         return network_Druid(game, playerId, name)
     if class_Id == 1:
+        print("network_Rogue ")
         return network_Rogue(game, playerId, name)
     if class_Id == 2:
+        print("network_Warrior ")
         return network_Warrior(game, playerId, name)
     
     else:
@@ -55,21 +58,21 @@ class Rogue(Player):
 
 class network_Rogue(network_player):
     def __init__(self, game, playerId, name):
-        super().__init__(game, playerID=playerId, name=name)
+        super().__init__(game, playerID=playerId, name=name, path="resources/sprites/players/Rogue")
         self.attack_power = 10
         self.health = 600
-        self.path="/resources/sprites/players/Rogue"
+        #self.path="/resources/sprites/players/Rogue"
 
 class network_Druid(network_player):
     def __init__(self, game, playerId, name):
-        super().__init__(game, playerID=playerId, name=name)
+        super().__init__(game, playerID=playerId, name=name, path="resources/sprites/players/Druid")
         self.attack_power = 10
         self.health = 600
-        self.path="/resources/sprites/players/Druid"
 
 class network_Warrior(network_player):
     def __init__(self,game, playerId, name):
-        super().__init__(game, playerID=playerId, name=name)
+        super().__init__(game, playerID=playerId, name=name, path="resources/sprites/players/Knight")
         self.attack_power = 10
         self.health = 600
-        self.path="/resources/sprites/players/Knight"
+        self.animation_time = 150
+        

@@ -102,7 +102,12 @@ def handle_connection(game, player: Player, playerList: player_list, gameEvent):
                     player_class = player_data[4]
                     player_hp = player_data[5]
                     angle = player_data[6]
-                    existing_player = network_player(game,playerId,player_class,playerName, player_x,player_y,angle,health=player_hp)
+                    existing_player = get_class_network(game,playerId,player_class,playerName)
+                    existing_player.x = player_x
+                    existing_player.y = player_y
+                    existing_player.angle = angle
+                    existing_player.health = player_hp
+                    #existing_player = network_player(game,playerId,player_class,playerName, player_x,player_y,angle,health=player_hp)
                     playerList.add_player(existing_player, playerId)
 
         game.send_message(['new_player', playerid, player.name ,player.class_id])
@@ -118,15 +123,16 @@ def handle_connection(game, player: Player, playerList: player_list, gameEvent):
     if gameEvent[0] == 'damaged_player':
         damaged_player_id = gameEvent[1]
         damage = gameEvent[2]
-        damaging_player_id = [3]
+        damaging_player_id = gameEvent[3]
 
+        print("player", damaging_player_id, "damaged player", damaged_player_id)
         if player.playerID != damaged_player_id:
-            print("player", damaging_player_id, "damaged player", damaged_player_id)
             updated_player_list = playerList.get_players()
             updated_player_list[damaged_player_id].health -= damage
+ 
+            
             playerList.set_playerList(updated_player_list)
         else:
-            print("You took damage!")
             if player.health - damage < 0:
                 player.health = 0
             else:
@@ -147,6 +153,15 @@ def handle_connection(game, player: Player, playerList: player_list, gameEvent):
             #Register new player in list
             playerList.add_player(player=new_player, id=playerId)
             print(f"New player | ID:{playerId} Name:{playerName} Class:{playerClass}")
+
+    if gameEvent[0] == 'attacked':
+        playerId = gameEvent[1]
+
+        if playerId != player.playerID:
+            updated_player_list = playerList.get_players()
+            updated_player_list[playerId].hasAttacked = True
+            updated_player_list[playerId].frame_counter = 0
+
 
     if gameEvent[0] == 'player_locations':
         gameEvent.pop(0)

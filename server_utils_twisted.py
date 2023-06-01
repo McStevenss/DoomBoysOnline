@@ -39,7 +39,8 @@ def broadcast_to_clients(message,outgoing, player_list):
 
 def handle_message_twisted(connections, message, outgoing, player_list):      
     update = None
-    #game.send_message(['position_update', player.playerID, player.x, player.y, player.health, player.angle, player.dx, player.dy])
+    
+    #Tell players that a player moved
     if message[0] == 'position_update':
         playerid = message[1]
         x = message[2]
@@ -57,6 +58,7 @@ def handle_message_twisted(connections, message, outgoing, player_list):
         update = [message[0]]
         update.append([playerid, player_list[playerid].name ,x, y, player_list[playerid].Class, health, angle, dx, dy])
 
+    #Tell players a certain player got damaged
     if message[0] == 'damaged_player':
         damaged_player_id = message[1]
         damage = message[2]
@@ -64,6 +66,7 @@ def handle_message_twisted(connections, message, outgoing, player_list):
         player_list[damaged_player_id].health = player_list[damaged_player_id].health - damage
         update = message
 
+    #Tell players that a new player has joined
     if message[0] == 'new_player':
         print("New player joined!")
         playerid = message[1]
@@ -73,6 +76,11 @@ def handle_message_twisted(connections, message, outgoing, player_list):
         # if playerid not in player_list:
         player_list[playerid] = Player(playerid,playerName,playerClass)
 
+        update = message
+
+    #Tell players that one player just performed an attack
+    if message[0] == 'attacked':      
+        playerid = message[1]
         update = message
 
     if update == None:

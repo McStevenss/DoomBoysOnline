@@ -87,6 +87,7 @@ class Player(BasePlayer):
                 #self.game.sound.shotgun.play()
                 self.shot = True
                 self.game.weapon.reloading = True
+                self.game.send_message(['attacked',self.playerID])
 
     def movement(self):
         sin_a = math.sin(self.angle)
