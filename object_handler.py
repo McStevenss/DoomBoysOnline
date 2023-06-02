@@ -29,6 +29,8 @@ class ObjectHandler:
         # sprite map
         add_sprite(SpriteObject(game, path='resources/sprites/static_sprites/pine_tree.PNG', pos=(3,19), scale=5, shift=-0.4))
         add_sprite(SpriteObject(game, path='resources/sprites/static_sprites/pine_tree.PNG', pos=(12,13), scale=5, shift=-0.4))
+        #add_sprite(SpriteObject(game, pos=(5,19)))
+
 
         # add_sprite(AnimatedSprite(game))
         # add_sprite(AnimatedSprite(game, pos=(1.5, 1.5)))

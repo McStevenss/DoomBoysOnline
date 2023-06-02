@@ -44,7 +44,13 @@ class Druid(Player):
         # Add additional attributes or behavior specific to the Warrior class
         self.attack_power = 10
         self.health = 100
-        game.weapon = HealingSpell(game)
+        #game.weapon = HealingSpell(game)
+        game.weapon = Bear_Claw(game)
+
+        healing_spell = Heal()
+        regenerate = Regenerate()
+        bear_form = Bear_Form()
+        self.spells = [healing_spell, regenerate, bear_form]
 
 class Rogue(Player):
     def __init__(self, game):
@@ -75,4 +81,47 @@ class network_Warrior(network_player):
         self.attack_power = 10
         self.health = 175
         self.animation_time = 150
+
+
+class Spell():
+    def __init__(self, spell_path="resources/icons/bear_form.png"):
+        self.name = "Unnamed Spell"
+        self.damage = 0
+        self.cost = 0
+        self.hud_icon = self.get_texture(spell_path)
+
+    @staticmethod
+    def get_texture(path, res=(50, 50)):
+        texture = pg.image.load(path).convert_alpha()
+        return pg.transform.scale(texture, res)
+
+#Effect takes player because it will essentially only affect the local player on each session
+class Effect():
+    def __init__(self, player:Player):
+        self.name = "Unnamed Effect"
+        self.duration = 10
+        self.hud_icon_path = ""
+
+
+
+class Heal(Spell):
+    def __init__(self):
+        super().__init__()
+        self.name="Heal"
+        self.damage = 0
+        self.cost = 10
+
+class Bear_Form(Spell):
+    def __init__(self):
+        super().__init__(spell_path="resources/icons/bear_form.png")
+        self.name="Bear Form"
+        self.damage = 0
+        self.cost = 10
+
+class Regenerate(Spell):
+    def __init__(self):
+        super().__init__(spell_path="resources/icons/poison.png")
+        self.name="Regenerate"
+        self.damage = 0
+        self.cost = 10
         

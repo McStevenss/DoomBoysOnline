@@ -48,6 +48,8 @@ class Player(BasePlayer):
         self.prevAngle = 0
         self.hasMoved = True
         self.prevDx, self.prevDy = 0,0
+        self.font_small = pg.font.Font('freesansbold.ttf', 25)
+        self.spells = []
         
 
     def recover_health(self):
@@ -138,6 +140,24 @@ class Player(BasePlayer):
         #     self.angle += PLAYER_ROT_SPEED * self.game.delta_time
         self.angle %= math.tau
 
+    def actionbar(self):
+        y_slot = 4
+        white = (255, 255, 255)
+        spells = 4
+        #action bar
+        pg.draw.rect(self.game.screen, (255, 0, 0), (0, HEIGHT- HEIGHT//y_slot, 325, 100))
+
+
+        #spell 1
+        for i in range(spells):
+            
+            pg.draw.rect(self.game.screen, (0, 255, 0), (25+75*i, HEIGHT- HEIGHT//y_slot + 25, 50, 50))
+            if i < len(self.spells):
+                self.game.screen.blit(self.spells[i].hud_icon, (25+75*i, HEIGHT- HEIGHT//y_slot + 25))
+            text = self.font_small.render(f"{i+1}", True, white)
+            self.game.screen.blit(text,(25+85*i, HEIGHT- HEIGHT//y_slot + 75))
+
+
     def check_wall(self, x, y):
         return (x, y) not in self.game.map.world_map
 
@@ -169,6 +189,7 @@ class Player(BasePlayer):
         self.movement()
         self.mouse_control()
         self.recover_health()
+        self.actionbar()
 
     @property
     def pos(self):

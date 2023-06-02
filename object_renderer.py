@@ -1,6 +1,6 @@
 import pygame as pg
 from settings import *
-
+from classes import *
 
 class ObjectRenderer:
     def __init__(self, game):
@@ -18,6 +18,7 @@ class ObjectRenderer:
         self.win_image = self.get_texture('resources/textures/win.png', RES)
 
         self.font = pg.font.Font('freesansbold.ttf', 32)
+
 
 
     def draw(self):
@@ -50,10 +51,12 @@ class ObjectRenderer:
 
     def render_game_objects(self):
         list_objects = sorted(self.game.raycasting.objects_to_render, key=lambda t: t[0], reverse=True)
+        
         for i in range(len(list_objects)):
 
             if len(list_objects[i]) != 4:
                 depth, image, pos = list_objects[i]
+
                 self.screen.blit(image, pos)
             else:
                 depth, image, pos, player = list_objects[i]
@@ -67,13 +70,19 @@ class ObjectRenderer:
 
                     textRect.center = (player.screenPos[0] + proj_width // 2, player.screenPos[1] + proj_height)
                     self.screen.blit(text,textRect)
+
                 self.screen.blit(image, pos)
 
+
     def draw_HUD(self):
+        self.draw_health()
+
+    def draw_health(self):
         green = (255, 0, 0)
         text = self.font.render(f'Health: {self.game.player.health}', True, green)
         textRect = text.get_rect()   
-        self.screen.blit(text,(textRect.x, textRect.y + HEIGHT - 50))            
+        self.screen.blit(text,(textRect.x, textRect.y + HEIGHT - 50))
+
 
     @staticmethod
     def get_texture(path, res=(TEXTURE_SIZE, TEXTURE_SIZE)):
