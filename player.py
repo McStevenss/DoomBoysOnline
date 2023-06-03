@@ -132,7 +132,6 @@ class Player(BasePlayer):
 
         self.check_wall_collision(dx, dy)
 
-
         #FOR KEY MOVEMENTS
         # if keys[pg.K_LEFT]:
         #     self.angle -= PLAYER_ROT_SPEED * self.game.delta_time
@@ -140,8 +139,43 @@ class Player(BasePlayer):
         #     self.angle += PLAYER_ROT_SPEED * self.game.delta_time
         self.angle %= math.tau
 
+    def execute_player_actions(self,game,event):
+        #Check spells
+        if event.type == pg.KEYUP and event.key == pg.K_1:
+            print("Cast spell one!")
+            try:
+                print("Spell", self.spells[0].name)
+                self.spells[0].cast()
+            except:
+                print("no spell")
+
+        if event.type == pg.KEYUP and event.key == pg.K_2:
+            print("Cast spell two!")
+            try:
+                print("Spell", self.spells[1].name)
+                self.spells[1].cast()
+            except:
+                print("no spell")
+
+        if event.type == pg.KEYUP and event.key == pg.K_3:
+            print("Cast spell three!")
+            try:
+                print("Spell", self.spells[2].name)
+                self.spells[2].cast()
+            except:
+                print("no spell")
+
+        if event.type == pg.KEYUP and event.key == pg.K_4:
+            print("Cast spell four!")
+            try:
+                print("Spell", self.spells[3].name)
+            except:
+                print("no spell")
+
+
+
     def actionbar(self):
-        y_slot = 4
+        y_slot = 2
         white = (255, 255, 255)
         spells = 4
         #action bar

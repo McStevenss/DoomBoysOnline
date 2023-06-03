@@ -131,6 +131,8 @@ class Game:
                 self.send_message(['damaged_player', event.data, self.weapon.damage, self.player.playerID])
                 print("Network player hit:", event.data, "dmg:", self.weapon.damage)
 
+            self.player.execute_player_actions(self,event)
+
         if should_exit:
             reactor.stop()
             os._exit(1)

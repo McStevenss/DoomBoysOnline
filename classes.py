@@ -27,7 +27,15 @@ def get_class_network(game, playerId, class_Id, name):
     
     else:
         return network_player(game, class_Id=class_Id)
+    
+def get_player_models():
 
+    warrior_model = "resources/sprites/players/Knight"
+    rogue_model = "resources/sprites/players/Rogue"
+    druid_model = "resources/sprites/players/Druid"
+    bear_form_model = "resources/sprites/players/Bear_Form"
+    player_model_paths = {"warrior": warrior_model, "rogue":rogue_model, "druid":druid_model, "bear_form":bear_form_model}
+    return player_model_paths
 
 class Warrior(Player):
     def __init__(self, game):
@@ -35,7 +43,9 @@ class Warrior(Player):
         # Add additional attributes or behavior specific to the Warrior class
         self.attack_power = 10
         self.health = 175
-        game.weapon = Axe(game)
+        #game.weapon = Axe(game)
+        game.weapon = Bow(game)
+        
 
 
 class Druid(Player):
@@ -44,12 +54,12 @@ class Druid(Player):
         # Add additional attributes or behavior specific to the Warrior class
         self.attack_power = 10
         self.health = 100
-        #game.weapon = HealingSpell(game)
-        game.weapon = Bear_Claw(game)
+        game.weapon = HealingSpell(game)
+        #game.weapon = Bear_Claw(game)
 
         healing_spell = Heal()
-        regenerate = Regenerate()
-        bear_form = Bear_Form()
+        regenerate = Regenerate(game,self)
+        bear_form = Bear_Form(game,self)
         self.spells = [healing_spell, regenerate, bear_form]
 
 class Rogue(Player):
@@ -90,6 +100,9 @@ class Spell():
         self.cost = 0
         self.hud_icon = self.get_texture(spell_path)
 
+    def cast(self):
+        print("CASTED DEFAULT SPELL")
+
     @staticmethod
     def get_texture(path, res=(50, 50)):
         texture = pg.image.load(path).convert_alpha()
@@ -112,16 +125,33 @@ class Heal(Spell):
         self.cost = 10
 
 class Bear_Form(Spell):
-    def __init__(self):
+    def __init__(self, game, player:Druid = None, network_player: network_Druid = None):
         super().__init__(spell_path="resources/icons/bear_form.png")
         self.name="Bear Form"
         self.damage = 0
         self.cost = 10
+        self.player = player
+        self.network_player = network_player
+        self.game = game
+        if self.network_player:
+            self.network_player.change_player_model("resources/sprites/players/Bear_Form")
+
+    def cast(self):
+        if self.player:
+            self.game.weapon = Bear_Claw(self.game)
+        
 
 class Regenerate(Spell):
-    def __init__(self):
+    def __init__(self, game, player:Druid = None, network_player: network_Druid = None):
         super().__init__(spell_path="resources/icons/poison.png")
         self.name="Regenerate"
         self.damage = 0
         self.cost = 10
+        self.player = player
+        self.network_player = network_player
+        self.game = game
+
+    def cast(self):
+        if self.player:
+            self.game.weapon = HealingSpell(self.game)
         

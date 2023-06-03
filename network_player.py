@@ -53,7 +53,13 @@ class network_player(BasePlayer):
         self.attack_animation_trigger = False
         self.attack_frame_counter = 0
 
-
+    def change_player_model(self, model_path="resources/sprites/players/Rogue"):
+        self.path = model_path
+        self.attack_images = self.get_animation(self.path + '/attack')
+        self.death_images = self.get_images(self.path + '/death')
+        self.idle_images = self.get_images(self.path + '/idle')
+        self.pain_images = self.get_animation(self.path + '/pain')
+        self.walk_images = self.get_animation(self.path + '/walk')
 
     def set_player_id(self, id):
         print("Set network player id to ", id)
