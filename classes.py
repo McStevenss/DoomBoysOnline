@@ -43,7 +43,9 @@ class Warrior(Player):
         super().__init__(game)
         # Add additional attributes or behavior specific to the Warrior class
         self.attack_power = 10
+        self.max_health = 175
         self.health = 175
+        self.armor = 65
         game.weapon = Axe(game)
 
 class Druid(Player):
@@ -51,10 +53,11 @@ class Druid(Player):
         super().__init__(game)
         # Add additional attributes or behavior specific to the Warrior class
         self.attack_power = 10
+        self.max_health = 100
         self.health = 100
-
+        self.armor = 25
         game.weapon = HealingSpell(game)
-        healing_spell = Heal()
+        healing_spell = Heal(game,self)
         regenerate = Regenerate(game,self)
         bear_form = Bear_Form(game,self)
         self.spells = [healing_spell, regenerate, bear_form]
@@ -64,7 +67,9 @@ class Rogue(Player):
         super().__init__(game)
         # Add additional attributes or behavior specific to the Warrior class
         self.attack_power = 10
+        self.max_health = 75
         self.health = 75
+        self.armor = 35
         game.weapon = Dagger(game)
         self.path="/resources/sprites/players/Rogue"
 
@@ -82,7 +87,7 @@ class network_Druid(network_player):
         self.attack_power = 10
         self.health = 100
 
-        healing_spell = Heal()
+        healing_spell = Heal(game, network_player=self)
         regenerate = Regenerate(game, network_player=self)
         bear_form = Bear_Form(game, network_player=self)
         self.spells = [healing_spell, regenerate, bear_form]
@@ -128,6 +133,12 @@ class Effect():
             print("set default effect on network_player")
             self.effect_started = time.time()
 
+    def get_effect_duration_left(self):
+        if self.player:
+            time_left = time.time() - self.effect_started
+        
+        return round(time_left,2)
+
 
 class Heal(Effect):
     def __init__(self):
@@ -142,15 +153,41 @@ class Heal(Effect):
         if self.network_player:
             #TODO: SEND SERVER MESSAGE TO HEAL PLAYER
             self.network_player.health += 50
+
+class Fast(Effect):
+    def __init__(self, player:Player):
+        super().__init__(player)
+        self.name = "Speed effect"
+        self.duration = 4
+        self.hud_icon_path = "resources/icons/bear_form.png"
+
+    def set_effect(self):
+        if self.player:
+            self.effect_started = time.time()
+            self.player.speed = 0.008
+
     
 
 
 class Heal(Spell):
-    def __init__(self):
-        super().__init__()
-        self.name="Heal"
+    def __init__(self, game, player:Druid = None, network_player: network_Druid = None):
+        super().__init__(spell_path="resources/icons/Lesser_Heal.png")
+        self.name="Lesser Heal"
         self.damage = 0
         self.cost = 10
+        self.player = player
+        self.network_player = network_player
+        self.game = game
+
+    def cast(self):
+        if self.player:
+            print("added hp")
+            self.player.health +=10
+            self.game.weapon = HealingSpell(self.game)
+            self.player.armor = DRUID_BASE_ARMOR
+
+        if self.network_player:
+            self.network_player.change_player_model("resources/sprites/players/Druid")
 
 class Bear_Form(Spell):
     def __init__(self, game, player:Druid = None, network_player: network_Druid = None):
@@ -166,13 +203,14 @@ class Bear_Form(Spell):
         print("player", self.player, "network_player", self.network_player)
         if self.player:
             self.game.weapon = Bear_Claw(self.game)
+            self.game.armor = 65
         if self.network_player:
             self.network_player.change_player_model("resources/sprites/players/Bear_Form")
         
 
 class Regenerate(Spell):
     def __init__(self, game, player:Druid = None, network_player: network_Druid = None):
-        super().__init__(spell_path="resources/icons/poison.png")
+        super().__init__(spell_path="resources/icons/Regenerate.png")
         self.name="Regenerate"
         self.damage = 0
         self.cost = 10
@@ -183,9 +221,24 @@ class Regenerate(Spell):
     def cast(self):
         if self.player:
             print("added hp")
-            self.player.health +=10
+            self.player.regenerate = True
             self.game.weapon = HealingSpell(self.game)
+            self.player.armor = DRUID_BASE_ARMOR
 
         if self.network_player:
             self.network_player.change_player_model("resources/sprites/players/Druid")
-        
+
+class Speed(Spell):
+    def __init__(self, game, player:Rogue):
+        super().__init__(spell_path="resources/icons/poison.png")
+        self.name="Speed"
+        self.damage = 0
+        self.cost = 10
+        self.duration = 5
+        self.player = player
+        self.speed = self.player.speed
+        self.game = game
+
+    def cast(self):   
+        fast_buff = Fast(self.player)   
+        self.player.effects.append(fast_buff)

@@ -76,12 +76,26 @@ class ObjectRenderer:
 
     def draw_HUD(self):
         self.draw_health()
+        self.draw_cost()
 
     def draw_health(self):
         green = (255, 0, 0)
-        text = self.font.render(f'Health: {self.game.player.health}', True, green)
+        text = self.font.render(f'', True, green)
+        textRect = text.get_rect()
+
+        health_percentage = self.game.player.health / self.game.player.max_health
+
+        pg.draw.rect(self.game.screen, (0,0, 0), (textRect.x, textRect.y + 300, 325, 50))
+        pg.draw.rect(self.game.screen, (255,0, 0), (textRect.x, textRect.y + 300, health_percentage * 325, 50))
+
+        #print(textRect.x, textRect.y)   
+        self.screen.blit(text,(textRect.x, textRect.y + 300))
+
+    def draw_cost(self):
+        green = (0, 0, 255)
+        text = self.font.render(f'Cost: {self.game.player.health}', True, green)
         textRect = text.get_rect()   
-        self.screen.blit(text,(textRect.x, textRect.y + HEIGHT - 50))
+        self.screen.blit(text,(textRect.x, textRect.y + 325))
 
 
     @staticmethod

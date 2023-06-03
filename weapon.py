@@ -49,7 +49,7 @@ class HealingSpell(Weapon):
         self.reloading = False
         self.num_images = len(self.images)
         self.frame_counter = 0
-        self.damage = 50
+        self.damage = 0
 
         self.weaponSound = pg.mixer.Sound("resources/sound/" + 'MAGIC02.wav')
 
@@ -131,14 +131,14 @@ class Bear_Claw(Weapon):
         for img in self.images:
             scaled_img = pg.transform.scale(img, (img.get_width() * self.scale, img.get_height() * self.scale))
             scaled_images.append(scaled_img)
-        
         self.images = scaled_images
         
+        
         self.weapon_pos = (WIDTH - self.images[0].get_width() * 1.2, HEIGHT - self.images[0].get_height())
+        self.weaponSound = pg.mixer.Sound("resources/sound/" + 'MNSTER19.wav')
+        self.weapon_range = 1
+        self.damage = 50
 
         self.reloading = False
         self.num_images = len(self.images)
         self.frame_counter = 0
-        self.damage = 50
-        self.weaponSound = pg.mixer.Sound("resources/sound/" + 'MNSTER19.wav')
-        self.weapon_range = 10

@@ -136,7 +136,7 @@ def handle_connection(game, player: Player, playerList: player_list, gameEvent):
             if player.health - damage < 0:
                 player.health = 0
             else:
-                player.health -= damage
+                player.get_damage(damage)
 
     if gameEvent[0] == 'new_player':
         playerId = gameEvent[1]

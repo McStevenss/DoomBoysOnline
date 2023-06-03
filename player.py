@@ -48,14 +48,38 @@ class Player(BasePlayer):
         self.prevAngle = 0
         self.hasMoved = True
         self.prevDx, self.prevDy = 0,0
+        self.speed = 0.004
         self.font_small = pg.font.Font('freesansbold.ttf', 25)
+
+        self.armor = 1
         self.spells = []
         self.active_spell = None
+        self.effects = []
+        
+        self.regenerate = False
+        self.totalRegenerated = 0
+
+        self.poison = False
+        self.totalPoisoned = 0
         
 
     def recover_health(self):
-        if self.check_health_recovery_delay() and self.health < PLAYER_MAX_HEALTH:
-            self.health += 1
+        if self.check_health_recovery_delay() and self.regenerate:
+            self.health += 2
+            self.totalRegenerated += 2
+        
+        if self.totalRegenerated > 25:
+            self.regenerate = False
+            self.totalRegenerated = 0
+
+    def poison_tick(self):
+        if self.check_health_recovery_delay() and self.poison:
+            self.health -= 2
+            self.totalPoisoned += 2
+        
+        if self.totalPoisoned > 25:
+            self.poison = False
+            self.totalPoisoned = 0
 
     def check_health_recovery_delay(self):
         time_now = pg.time.get_ticks()
@@ -80,7 +104,11 @@ class Player(BasePlayer):
             self.game.new_game()
 
     def get_damage(self, damage):
-        self.health -= damage
+
+        #calculate damage from armor reduction
+        dmg_multiplier = damage / (damage + self.armor)
+        actual_damage = damage * dmg_multiplier
+        self.health -= int(actual_damage)
         self.game.object_renderer.player_damage()
         self.game.sound.player_pain.play()
         self.check_game_over()
@@ -105,7 +133,7 @@ class Player(BasePlayer):
         cos_a = math.cos(self.angle)
         dx, dy = 0, 0
         
-        speed = PLAYER_SPEED * self.game.delta_time
+        speed = self.speed * self.game.delta_time
         speed_sin = speed * sin_a
         speed_cos = speed * cos_a
 
@@ -146,7 +174,7 @@ class Player(BasePlayer):
         #     self.angle += PLAYER_ROT_SPEED * self.game.delta_time
         self.angle %= math.tau
 
-    def execute_player_actions(self,game,event):
+    def execute_player_actions(self,event):
         #Check spells
         if event.type == pg.KEYUP and event.key == pg.K_1:
             if len(self.spells) >= 1:
@@ -173,13 +201,12 @@ class Player(BasePlayer):
     def actionbar(self):
         y_slot = 2
         white = (255, 255, 255)
-        spells = 4
         #action bar
-        pg.draw.rect(self.game.screen, (255, 0, 0), (0, HEIGHT- HEIGHT//y_slot, 325, 100))
+        pg.draw.rect(self.game.screen, (135,135, 135), (0, HEIGHT- HEIGHT//y_slot, 325, 100))
 
 
         #spell 1
-        for i in range(spells):
+        for i, spell in enumerate(self.spells):
             
             pg.draw.rect(self.game.screen, (0, 255, 0), (25+75*i, HEIGHT- HEIGHT//y_slot + 25, 50, 50))
             if i < len(self.spells):
