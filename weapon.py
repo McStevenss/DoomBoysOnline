@@ -120,8 +120,6 @@ class Bow(Weapon):
         self.game.screen.blit(self.crosshair, (WIDTH//2,HEIGHT//2))
 
 
-
-
 class Bear_Claw(Weapon):
     def __init__(self, game):
         super().__init__(game, path="resources/sprites/weapon/bear_form/0.png", animation_time= 160)      

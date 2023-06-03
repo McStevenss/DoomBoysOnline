@@ -52,6 +52,7 @@ class network_player(BasePlayer):
         self.attack_animation_time_prev = pg.time.get_ticks()
         self.attack_animation_trigger = False
         self.attack_frame_counter = 0
+        self.spells = []
 
     def change_player_model(self, model_path="resources/sprites/players/Rogue"):
         self.path = model_path
@@ -105,8 +106,7 @@ class network_player(BasePlayer):
             
         elif self.frame_counter > len(self.pain_images[player_direction]) * 12 - 1:
             self.pain = False
-            self.frame_counter = 0
-    
+            self.frame_counter = 0   
 
     def animate(self):
         local_player_angle = math.degrees(self.game.player.angle)
@@ -207,6 +207,11 @@ class network_player(BasePlayer):
         self.check_hit_in_player()
         #self.animate_attack()    
     
+    def execute_network_player_spell(self,spellIndex):
+        self.spells[spellIndex].cast()
+
+
+
     def get_player_direction(self, angle_difference):
         # Define the angle ranges for each direction
         direction_ranges = {
@@ -227,10 +232,6 @@ class network_player(BasePlayer):
                      min_difference = difference
                      network_player_direction = direction
         return network_player_direction  # Default direction (Front)
-    
-    @property
-    def map_pos(self):
-        return int(self.x), int(self.y)
     
     def get_sprite_projection(self):
         proj = SCREEN_DIST / self.norm_dist * self.SPRITE_SCALE
@@ -264,7 +265,6 @@ class network_player(BasePlayer):
         self.norm_dist = self.dist * math.cos(delta)
         if -self.IMAGE_HALF_WIDTH < self.screen_x < (WIDTH + self.IMAGE_HALF_WIDTH) and self.norm_dist > 0.5:
             self.get_sprite_projection()
-
     
     def ray_cast_player_to_network_player(self):
         if self.game.player.map_pos == self.map_pos:

@@ -83,6 +83,11 @@ def handle_message_twisted(connections, message, outgoing, player_list):
         playerid = message[1]
         update = message
 
+    #['cast_spell', self.player.playerID, 1]
+    if message[0] == 'cast_spell':
+        print("player", message[1], "casted spell", message[2])
+        update = message
+
     if update == None:
         print("unknown command:", message)
 

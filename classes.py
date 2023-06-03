@@ -1,6 +1,7 @@
 from player import *
 from weapon import *
 from network_player import *
+import time
 
 #print("Please choose class: [0] Druid, [1] Rogue, [2] Warrior")
 def get_class(class_id, game):
@@ -43,10 +44,7 @@ class Warrior(Player):
         # Add additional attributes or behavior specific to the Warrior class
         self.attack_power = 10
         self.health = 175
-        #game.weapon = Axe(game)
-        game.weapon = Bow(game)
-        
-
+        game.weapon = Axe(game)
 
 class Druid(Player):
     def __init__(self, game):
@@ -54,9 +52,8 @@ class Druid(Player):
         # Add additional attributes or behavior specific to the Warrior class
         self.attack_power = 10
         self.health = 100
-        game.weapon = HealingSpell(game)
-        #game.weapon = Bear_Claw(game)
 
+        game.weapon = HealingSpell(game)
         healing_spell = Heal()
         regenerate = Regenerate(game,self)
         bear_form = Bear_Form(game,self)
@@ -85,6 +82,11 @@ class network_Druid(network_player):
         self.attack_power = 10
         self.health = 100
 
+        healing_spell = Heal()
+        regenerate = Regenerate(game, network_player=self)
+        bear_form = Bear_Form(game, network_player=self)
+        self.spells = [healing_spell, regenerate, bear_form]
+
 class network_Warrior(network_player):
     def __init__(self,game, playerId, name):
         super().__init__(game, playerID=playerId, name=name, path="resources/sprites/players/Knight")
@@ -110,11 +112,37 @@ class Spell():
 
 #Effect takes player because it will essentially only affect the local player on each session
 class Effect():
-    def __init__(self, player:Player):
+    def __init__(self, player:Player = None, network_player:network_player = None):
         self.name = "Unnamed Effect"
         self.duration = 10
         self.hud_icon_path = ""
+        self.player = player
+        self.network_player = network_player
+        self.effect_started = 0
 
+    def set_effect(self):
+        if self.player and self.effect_started == 0:
+            print("set default effect on player")
+            self.effect_started = time.time()
+        if self.network_player and self.effect_started == 0:
+            print("set default effect on network_player")
+            self.effect_started = time.time()
+
+
+class Heal(Effect):
+    def __init__(self):
+        super().__init__()
+        self.name = "Unnamed Effect"
+        self.duration = 0
+        self.hud_icon_path = ""
+
+    def set_effect(self):
+        if self.player:
+            self.player.health += 50
+        if self.network_player:
+            #TODO: SEND SERVER MESSAGE TO HEAL PLAYER
+            self.network_player.health += 50
+    
 
 
 class Heal(Spell):
@@ -133,12 +161,13 @@ class Bear_Form(Spell):
         self.player = player
         self.network_player = network_player
         self.game = game
-        if self.network_player:
-            self.network_player.change_player_model("resources/sprites/players/Bear_Form")
 
     def cast(self):
+        print("player", self.player, "network_player", self.network_player)
         if self.player:
             self.game.weapon = Bear_Claw(self.game)
+        if self.network_player:
+            self.network_player.change_player_model("resources/sprites/players/Bear_Form")
         
 
 class Regenerate(Spell):
@@ -153,5 +182,10 @@ class Regenerate(Spell):
 
     def cast(self):
         if self.player:
+            print("added hp")
+            self.player.health +=10
             self.game.weapon = HealingSpell(self.game)
+
+        if self.network_player:
+            self.network_player.change_player_model("resources/sprites/players/Druid")
         

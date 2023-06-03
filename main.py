@@ -124,7 +124,6 @@ class Game:
 
             elif event.type == self.global_event:
                 self.global_trigger = True
-                
             self.player.single_fire_event(event)
 
             if event.type == self.player_hit_event:

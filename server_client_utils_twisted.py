@@ -162,6 +162,14 @@ def handle_connection(game, player: Player, playerList: player_list, gameEvent):
             updated_player_list[playerId].hasAttacked = True
             updated_player_list[playerId].frame_counter = 0
 
+    if gameEvent[0] == 'cast_spell':
+        playerId = gameEvent[1]
+        spell_index = gameEvent[2]
+        if player.playerID != playerId:
+            updated_player_list = playerList.get_players()
+            updated_player_list[playerId].hasAttacked = True
+            updated_player_list[playerId].execute_network_player_spell(spell_index)
+
 
     if gameEvent[0] == 'player_locations':
         gameEvent.pop(0)

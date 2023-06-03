@@ -50,6 +50,7 @@ class Player(BasePlayer):
         self.prevDx, self.prevDy = 0,0
         self.font_small = pg.font.Font('freesansbold.ttf', 25)
         self.spells = []
+        self.active_spell = None
         
 
     def recover_health(self):
@@ -87,11 +88,17 @@ class Player(BasePlayer):
     def single_fire_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 1 and not self.shot and not self.game.weapon.reloading:
-                self.game.weapon.weaponSound.play()
                 #self.game.sound.shotgun.play()
-                self.shot = True
-                self.game.weapon.reloading = True
-                self.game.send_message(['attacked',self.playerID])
+                #self.game.send_message(['attacked',self.playerID])
+
+                if self.active_spell != None:
+                    self.active_spell.cast()
+                    spell_index =self.spells.index(self.active_spell)
+                    self.game.send_message(['cast_spell', self.playerID, spell_index])
+                    self.game.weapon.weaponSound.play()
+                    self.shot = True
+                    self.game.weapon.reloading = True
+
 
     def movement(self):
         sin_a = math.sin(self.angle)
@@ -142,35 +149,24 @@ class Player(BasePlayer):
     def execute_player_actions(self,game,event):
         #Check spells
         if event.type == pg.KEYUP and event.key == pg.K_1:
-            print("Cast spell one!")
-            try:
-                print("Spell", self.spells[0].name)
-                self.spells[0].cast()
-            except:
-                print("no spell")
+            if len(self.spells) >= 1:
+                print("Cast spell", self.spells[0].name)
+                self.active_spell = self.spells[0]
 
         if event.type == pg.KEYUP and event.key == pg.K_2:
-            print("Cast spell two!")
-            try:
-                print("Spell", self.spells[1].name)
-                self.spells[1].cast()
-            except:
-                print("no spell")
+            if len(self.spells) >= 2:
+                print("Cast spell", self.spells[1].name)
+                self.active_spell = self.spells[1]
 
         if event.type == pg.KEYUP and event.key == pg.K_3:
-            print("Cast spell three!")
-            try:
-                print("Spell", self.spells[2].name)
-                self.spells[2].cast()
-            except:
-                print("no spell")
+            if len(self.spells) >= 3:
+                print("Cast spell", self.spells[2].name)
+                self.active_spell = self.spells[2]
 
         if event.type == pg.KEYUP and event.key == pg.K_4:
-            print("Cast spell four!")
-            try:
-                print("Spell", self.spells[3].name)
-            except:
-                print("no spell")
+            if len(self.spells) >= 4:
+                print("Cast spell", self.spells[3].name)
+                self.active_spell = self.spells[3]
 
 
 
