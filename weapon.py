@@ -17,6 +17,7 @@ class Weapon(AnimatedSprite):
         self.damage = 50
         self.weapon_range = 999999
         self.weaponSound = pg.mixer.Sound("resources/sound/" + 'shotgun.wav')
+        self.isSpell = False
 
     def animate_shot(self):
         if self.reloading:
@@ -46,6 +47,7 @@ class HealingSpell(Weapon):
              for img in self.images])
         self.weapon_pos = (0, HEIGHT - self.images[0].get_height())
 
+        self.isSpell = True
         self.reloading = False
         self.num_images = len(self.images)
         self.frame_counter = 0

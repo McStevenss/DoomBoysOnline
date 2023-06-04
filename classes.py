@@ -48,6 +48,11 @@ class Warrior(Player):
         self.armor = 65
         game.weapon = Axe(game)
 
+        self.resource_pool = 100
+        self.resource_name = "Rage"
+        self.resource_regen = 1
+        self.resource_color = (255,99,99)
+
 class Druid(Player):
     def __init__(self, game):
         super().__init__(game)
@@ -62,6 +67,11 @@ class Druid(Player):
         bear_form = Bear_Form(game,self)
         self.spells = [healing_spell, regenerate, bear_form]
 
+        self.resource_pool = 100
+        self.resource_name = "Mana"
+        self.resource_regen = 1
+        self.resource_color = (0,0,255)
+
 class Rogue(Player):
     def __init__(self, game):
         super().__init__(game)
@@ -70,8 +80,16 @@ class Rogue(Player):
         self.max_health = 75
         self.health = 75
         self.armor = 35
+
         game.weapon = Dagger(game)
+        speed_spell = Speed(game,self)
+        self.spells = [speed_spell]
         self.path="/resources/sprites/players/Rogue"
+
+        self.resource_pool = 100
+        self.resource_name = "Energy"
+        self.resource_regen = 4
+        self.resource_color = (0,0,255)
 
 
 class network_Rogue(network_player):
@@ -122,6 +140,8 @@ class Effect():
         self.duration = 10
         self.hud_icon_path = ""
         self.player = player
+        self.original_stat = 123
+        self.new_stat = 321
         self.network_player = network_player
         self.effect_started = 0
 
@@ -135,9 +155,13 @@ class Effect():
 
     def get_effect_duration_left(self):
         if self.player:
-            time_left = time.time() - self.effect_started
+            time_left = self.duration - (time.time() - self.effect_started)
         
         return round(time_left,2)
+    
+    def remove_effect(self):
+        #player.stat = self.original_stat
+        pass
 
 
 class Heal(Effect):
@@ -160,12 +184,17 @@ class Fast(Effect):
         self.name = "Speed effect"
         self.duration = 4
         self.hud_icon_path = "resources/icons/bear_form.png"
+        self.original_stat = player.speed
 
     def set_effect(self):
         if self.player:
             self.effect_started = time.time()
-            self.player.speed = 0.008
+            self.player.speed = self.original_stat * 2
+            print("buff is ",self.player.speed)
 
+    def remove_effect(self):
+        if self.player:
+            self.player.speed = self.original_stat
     
 
 
@@ -240,5 +269,6 @@ class Speed(Spell):
         self.game = game
 
     def cast(self):   
-        fast_buff = Fast(self.player)   
+        fast_buff = Fast(self.player)
+        fast_buff.set_effect()
         self.player.effects.append(fast_buff)

@@ -20,6 +20,7 @@ class BasePlayer:
         self.angle = PLAYER_ANGLE
         self.angleDeg = PLAYER_ANGLE
         self.shot = False
+        self.max_health = PLAYER_MAX_HEALTH
         self.health = PLAYER_MAX_HEALTH
         self.alive = True
         self.class_Id = 0 #DEFAULT CLASS
@@ -51,6 +52,12 @@ class Player(BasePlayer):
         self.speed = 0.004
         self.font_small = pg.font.Font('freesansbold.ttf', 25)
 
+        self.resource_pool = 100
+        self.resource_name = "Mana"
+        self.resource_regen = 1
+        self.resource_color = (0,0,255)
+        self.max_resource = 100
+
         self.armor = 1
         self.spells = []
         self.active_spell = None
@@ -64,13 +71,17 @@ class Player(BasePlayer):
         
 
     def recover_health(self):
-        if self.check_health_recovery_delay() and self.regenerate:
+        if self.check_health_recovery_delay() and self.regenerate and self.health < self.max_health:
             self.health += 2
             self.totalRegenerated += 2
         
         if self.totalRegenerated > 25:
             self.regenerate = False
             self.totalRegenerated = 0
+
+    def recover_resource(self):
+        if self.check_health_recovery_delay() and self.resource_pool < self.max_resource:
+            self.resource_pool += self.resource_regen
 
     def poison_tick(self):
         if self.check_health_recovery_delay() and self.poison:
@@ -119,14 +130,18 @@ class Player(BasePlayer):
                 #self.game.sound.shotgun.play()
                 #self.game.send_message(['attacked',self.playerID])
 
-                if self.active_spell != None:
-                    self.active_spell.cast()
-                    spell_index =self.spells.index(self.active_spell)
-                    self.game.send_message(['cast_spell', self.playerID, spell_index])
+                #Use weapon
+                if not self.game.weapon.isSpell:
                     self.game.weapon.weaponSound.play()
                     self.shot = True
                     self.game.weapon.reloading = True
 
+    def get_effect_durations(self):
+        for effect in self.effects:
+            duration_left = effect.get_effect_duration_left()
+            if duration_left <= 0:
+                effect.remove_effect()
+                self.effects.remove(effect)
 
     def movement(self):
         sin_a = math.sin(self.angle)
@@ -179,22 +194,54 @@ class Player(BasePlayer):
         if event.type == pg.KEYUP and event.key == pg.K_1:
             if len(self.spells) >= 1:
                 print("Cast spell", self.spells[0].name)
+
                 self.active_spell = self.spells[0]
+                self.game.send_message(['cast_spell', self.playerID, 0])
+
+                self.active_spell.cast()
+                #Animate weapon after spell is cast
+                self.game.weapon.weaponSound.play()
+                self.shot = True
+                self.game.weapon.reloading = True
 
         if event.type == pg.KEYUP and event.key == pg.K_2:
             if len(self.spells) >= 2:
                 print("Cast spell", self.spells[1].name)
+
                 self.active_spell = self.spells[1]
+                self.game.send_message(['cast_spell', self.playerID, 1])
+                #Animate weapon after spell is cast
+                self.active_spell.cast()
+                self.resource_pool - self.active_spell.cost
+                self.game.weapon.weaponSound.play()
+                self.shot = True
+                self.game.weapon.reloading = True
 
         if event.type == pg.KEYUP and event.key == pg.K_3:
             if len(self.spells) >= 3:
                 print("Cast spell", self.spells[2].name)
+
                 self.active_spell = self.spells[2]
+                self.game.send_message(['cast_spell', self.playerID, 2])
+
+                #Animate weapon after spell is cast
+                self.active_spell.cast()
+                self.game.weapon.weaponSound.play()
+                self.shot = True
+                self.game.weapon.reloading = True
 
         if event.type == pg.KEYUP and event.key == pg.K_4:
             if len(self.spells) >= 4:
                 print("Cast spell", self.spells[3].name)
+
                 self.active_spell = self.spells[3]
+                self.game.send_message(['cast_spell', self.playerID, 3])
+
+                #Animate weapon after spell is cast
+                self.active_spell.cast()
+                self.game.weapon.weaponSound.play()
+                self.shot = True
+                self.game.weapon.reloading = True
 
 
 
@@ -246,7 +293,9 @@ class Player(BasePlayer):
         self.movement()
         self.mouse_control()
         self.recover_health()
+        self.recover_resource()
         self.actionbar()
+        self.get_effect_durations()
 
     @property
     def pos(self):

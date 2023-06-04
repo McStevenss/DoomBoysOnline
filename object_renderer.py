@@ -92,8 +92,7 @@ class ObjectRenderer:
         self.screen.blit(text,(textRect.x, textRect.y + 300))
 
     def draw_cost(self):
-        green = (0, 0, 255)
-        text = self.font.render(f'Cost: {self.game.player.health}', True, green)
+        text = self.font.render(f'{self.game.player.resource_name}: {self.game.player.resource_pool}', True, self.game.player.resource_color)
         textRect = text.get_rect()   
         self.screen.blit(text,(textRect.x, textRect.y + 325))
 
