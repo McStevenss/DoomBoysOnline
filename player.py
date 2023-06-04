@@ -40,7 +40,10 @@ class Player(BasePlayer):
         super().__init__(game)
         self.rel = 0
         self.health_recovery_delay = 700
+        self.resource_recovery_delay = 700
+
         self.time_prev = pg.time.get_ticks()
+        self.resource_time_prev = pg.time.get_ticks()
         self.class_id = 0
         # diagonal movement correction
         self.diag_move_corr = 1 / math.sqrt(2)
@@ -80,7 +83,7 @@ class Player(BasePlayer):
             self.totalRegenerated = 0
 
     def recover_resource(self):
-        if self.check_health_recovery_delay() and self.resource_pool < self.max_resource:
+        if self.check_resource_recovery_delay() and self.resource_pool < self.max_resource:
             self.resource_pool += self.resource_regen
 
     def poison_tick(self):
@@ -97,6 +100,14 @@ class Player(BasePlayer):
         if time_now - self.time_prev > self.health_recovery_delay:
             self.time_prev = time_now
             return True
+        
+    
+    def check_resource_recovery_delay(self):
+        time_now = pg.time.get_ticks()
+        if time_now - self.resource_time_prev > self.resource_recovery_delay:
+            self.resource_time_prev = time_now
+            return True
+        
     
     def set_player_id(self, id):
         self.playerID = id
@@ -193,16 +204,18 @@ class Player(BasePlayer):
         #Check spells
         if event.type == pg.KEYUP and event.key == pg.K_1:
             if len(self.spells) >= 1:
-                print("Cast spell", self.spells[0].name)
+                if self.resource_pool - self.spells[0].cost >= 0:
+                    print("Cast spell", self.spells[0].name)
+                    self.active_spell = self.spells[0]
+                    self.game.send_message(['cast_spell', self.playerID, 0])
 
-                self.active_spell = self.spells[0]
-                self.game.send_message(['cast_spell', self.playerID, 0])
-
-                self.active_spell.cast()
-                #Animate weapon after spell is cast
-                self.game.weapon.weaponSound.play()
-                self.shot = True
-                self.game.weapon.reloading = True
+                    self.active_spell.cast()
+                    print(self.resource_pool - self.active_spell.cost)
+                    self.resource_pool = self.resource_pool - self.active_spell.cost
+                    #Animate weapon after spell is cast
+                    self.game.weapon.weaponSound.play()
+                    self.shot = True
+                    self.game.weapon.reloading = True
 
         if event.type == pg.KEYUP and event.key == pg.K_2:
             if len(self.spells) >= 2:
@@ -292,6 +305,8 @@ class Player(BasePlayer):
     def update(self):
         self.movement()
         self.mouse_control()
+        #self.check_health_recovery_delay()
+        #self.check_resource_recovery_delay()
         self.recover_health()
         self.recover_resource()
         self.actionbar()

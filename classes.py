@@ -210,7 +210,6 @@ class Heal(Spell):
 
     def cast(self):
         if self.player:
-            print("added hp")
             self.player.health +=10
             self.game.weapon = HealingSpell(self.game)
             self.player.armor = DRUID_BASE_ARMOR
@@ -249,7 +248,6 @@ class Regenerate(Spell):
 
     def cast(self):
         if self.player:
-            print("added hp")
             self.player.regenerate = True
             self.game.weapon = HealingSpell(self.game)
             self.player.armor = DRUID_BASE_ARMOR

@@ -76,24 +76,26 @@ class ObjectRenderer:
 
     def draw_HUD(self):
         self.draw_health()
-        self.draw_cost()
+        self.draw_resource()
 
     def draw_health(self):
-        green = (255, 0, 0)
-        text = self.font.render(f'', True, green)
+        text = self.font.render(f'Health: {self.game.player.health}', True, (255, 255, 255))
         textRect = text.get_rect()
 
         health_percentage = self.game.player.health / self.game.player.max_health
 
-        pg.draw.rect(self.game.screen, (0,0, 0), (textRect.x, textRect.y + 300, 325, 50))
-        pg.draw.rect(self.game.screen, (255,0, 0), (textRect.x, textRect.y + 300, health_percentage * 325, 50))
+        pg.draw.rect(self.game.screen, (0,0, 0), (textRect.x, textRect.y + 250, 325, 50))
+        pg.draw.rect(self.game.screen, (255,0, 0), (textRect.x, textRect.y + 250, health_percentage * 325, 50))
 
         #print(textRect.x, textRect.y)   
         self.screen.blit(text,(textRect.x, textRect.y + 300))
 
-    def draw_cost(self):
-        text = self.font.render(f'{self.game.player.resource_name}: {self.game.player.resource_pool}', True, self.game.player.resource_color)
+    def draw_resource(self):
+        text = self.font.render(f'{self.game.player.resource_name}: {self.game.player.resource_pool}', True, (255,255,255))
+        resource_percentage = self.game.player.resource_pool / self.game.player.max_resource
         textRect = text.get_rect()   
+        pg.draw.rect(self.game.screen, (0,0, 0), (textRect.x, textRect.y + 300, 325, 50))
+        pg.draw.rect(self.game.screen, self.game.player.resource_color, (textRect.x, textRect.y + 300, resource_percentage * 325, 50))
         self.screen.blit(text,(textRect.x, textRect.y + 325))
 
 
